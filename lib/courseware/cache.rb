@@ -18,6 +18,7 @@ class Courseware::Cache
   def update
     $logger.debug "Updating template cache..."
     git('templates', 'pull', '--quiet', 'origin', 'master')
+    git('templates', 'reset', '--quiet', '--hard', 'HEAD')
   end
 
   def clear
@@ -26,7 +27,9 @@ class Courseware::Cache
 
 private
   def git(repo, *args)
-    system('git', '--git-dir', File.join(@config[:cachedir], repo, '.git'), *args)
+    worktree = File.join(@config[:cachedir], repo)
+    gitdir   = File.join(worktree, '.git')
+    system('git', '--git-dir', gitdir, '--work-tree', worktree, *args)
   end
 
 end

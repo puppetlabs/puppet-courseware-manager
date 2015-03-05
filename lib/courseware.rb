@@ -1,6 +1,7 @@
 class Courseware
   require 'courseware/cache'
   require 'courseware/generator'
+  require 'courseware/manager'
   require 'courseware/repository'
   require 'courseware/utils'
 
@@ -10,6 +11,7 @@ class Courseware
     @cache      = Courseware::Cache.new(config)
     @repository = Courseware::Repository.new(config)
     @generator  = Courseware::Generator.new(config)
+    @manager    = Courseware::Manager.new(config)
   end
 
   def options(opts)
@@ -30,20 +32,31 @@ class Courseware
 
   def generate(subject)
     $logger.debug "Generating #{subject}"
-    subject.each do |item|
-      case item
-      when :config
-        @generator.saveconfig @configfile
+    if subject.first == :skeleton
+      subject.shift
+      subject.each do |course|
+        @generator.skeleton course.to_s
+      end
+    else
+      subject.each do |item|
+        case item
+        when :config
+          @generator.saveconfig @configfile
 
-      when :styles
-        @generator.styles
+        when :styles
+          course = @manager.coursename
+          prefix = @manager.prefix
+          @generator.styles(course, @repository.current(prefix))
 
-      when :links
-        @generator.links
+        when :links
+          @generator.links
 
-      when :skeleton
-        @generator.skeleton
+        when :metadata
+          @generator.metadata
 
+        else
+          $logger.error "I don't know how to generate #{item}!"
+        end
       end
     end
 
@@ -51,17 +64,17 @@ class Courseware
 
   def validate(subject)
     $logger.debug "Validating #{subject}"
-
+    $logger.error "I don't know how to do that yet!"
   end
 
   def release(subject)
     $logger.debug "Releasing #{subject}"
-
+    $logger.error "I don't know how to do that yet!"
   end
 
   def review
     $logger.debug "Starting quarterly review."
-
+    $logger.error "I don't know how to do that yet!"
   end
 
 end

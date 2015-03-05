@@ -94,6 +94,25 @@ class Courseware::Repository
     str
   end
 
+  # This gets a list of all tags matching a prefix.
+  # Gem::Version is used simply for semantic version comparisons.
+  def tags(prefix, count=1)
+    tags = `git tag -l '#{prefix}*'`.split("\n").sort_by { |tag| Gem::Version.new(tag.gsub(/^.*-?v/, '')) }.last(count)
+    tags.empty? ? ['v0.0.0'] : tags
+  end
+
+  def current(prefix)
+    [point_release(prefix), quarterly_release].max_by { |tag| Gem::Version.new(tag.gsub(/^.*-?v/, '')) }
+  end
+
+  def point_release(prefix)
+    tags(prefix).first.gsub(/^#{prefix}-/, '')
+  end
+
+  def quarterly_release
+    tags('v').first
+  end
+
 private
 
   def configure_courseware

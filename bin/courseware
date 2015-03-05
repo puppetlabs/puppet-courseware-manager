@@ -52,6 +52,7 @@ config.merge!(cmdlineopts)
 config[:templates]            ||= 'git@github.com:puppetlabs/courseware-templates.git'
 config[:cachedir]             ||= '~/.courseware'
 config[:stylesheet]           ||= 'courseware.css'
+config[:presfile]             ||= 'showoff.json'
 config[:github]               ||= {}
 config[:github][:public]      ||= 'puppet-training'
 config[:github][:development] ||= 'puppetlabs'

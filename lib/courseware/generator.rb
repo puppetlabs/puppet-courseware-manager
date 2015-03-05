@@ -1,3 +1,4 @@
+require 'erb'
 require 'json'
 require 'yaml'
 require 'fileutils'
@@ -18,16 +19,16 @@ class Courseware::Generator
 
     Dir.chdir(dest) do
       links
+      course = metadata()
       styles(course, '0.0.1')
-      metadata(dest)
     end
   end
 
-  def styles(course, version)
+  def styles(course=nil, version=nil)
     File.open(@config[:stylesheet], 'w') do |f|
       $logger.warn "Updating stylesheet for #{course} version #{version}."
       template = File.join(@config[:cachedir], 'templates', 'showoff.css.erb')
-      f.write ERB.new(File.read(template, nil, '-')).result(binding)
+      f.write ERB.new(File.read(template), nil, '-').result(binding)
     end
   end
 
@@ -35,24 +36,35 @@ class Courseware::Generator
     filename = File.join(@config[:cachedir], 'templates', 'links.json')
     JSON.parse(File.read(filename)).each do |file, target|
       $logger.warn "Linking #{file} -> #{target}"
-      File.ln_sf(target, file)
+      FileUtils.rm_rf(file) if File.exists?(file)
+      FileUtils.ln_sf(target, file)
     end
   end
 
-  def metadata(dest)
-    coursename  = Courseware.question('Choose a one-word codename for this course:', dest.capitalize)
-    description = Courseware.question('Please type a short description of the course:')
-    component   = Courseware.get_component
-
-    filename = File.join(@config[:cachedir], 'templates', 'showoff.json')
-    metadata = JSON.parse(File.read(filename))
+  def metadata
+    location = File.basename Dir.pwd
+    if File.exists?(@config[:presfile])
+      metadata    = JSON.parse(File.read(@config[:presfile]))
+      coursename  = metadata['name']
+      description = metadata['description']
+      component   = metadata['issues'].match(/components=(\d*)/)[1]
+    else
+      template    = File.join(@config[:cachedir], 'templates', 'showoff.json')
+      metadata    = JSON.parse(File.read(template))
+      coursename  = location.capitalize
+      description = nil
+      component   = nil
+    end
+    coursename  = Courseware.question('Choose a short name for this course:', coursename)
+    description = Courseware.question('Please enter a description of the course:', description)
+    component   = Courseware.get_component(component)
 
     metadata['name']        = coursename
     metadata['description'] = description
+    metadata['edit']        = "https://github.com/puppetlabs/#{@config[:github][:repository]}/edit/qa/review/#{coursename}/#{location}/"
+    metadata['issues']      = "http://tickets.puppetlabs.com/secure/CreateIssueDetails!init.jspa?pid=10302&issuetype=1&components=#{component}&priority=6&summary="
 
-    metadata['edit']   = "https://github.com/puppetlabs/#{config[:github][:repository]}/edit/qa/review/#{coursename}/#{dest}/"
-    metadata['issues'] = "http://tickets.puppetlabs.com/secure/CreateIssueDetails!init.jspa?pid=10302&issuetype=1&components=#{component}&priority=6&summary="
-
-    File.write('showoff.json', JSON.pretty_generate(metadata))
+    File.write(@config[:presfile], JSON.pretty_generate(metadata))
+    coursename
   end
 end
