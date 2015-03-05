@@ -5,7 +5,7 @@ class Courseware::Manager
     Dir.glob('**/_images/*') do |file|
       next if File.symlink? file
       next if File.directory? file
-      next if system("grep #{file} showoff.css */*.md >/dev/null 2>&1")
+      next if system("grep #{file} *.css */*.md >/dev/null 2>&1")
 
       puts "  * #{file}"
       @warnings += 1

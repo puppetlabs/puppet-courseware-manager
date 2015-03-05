@@ -37,8 +37,20 @@ DESCRIPTION
 
                metadata: Interactively generate or update the `showoff.json` file.
 
-  * validate
-      Validate certain things. Not yet implemented.
+  * validate [check]
+      Check the presentation for validity in a case-sensitive fashion. Defaults to
+      running all the checks.
+
+      Validators:
+          obsolete: Lists all unreferenced images and slides. This reference checks
+                    all slides and all CSS stylesheets.
+
+           missing: Lists all slides that are missing. Note that this does not check
+                    for missing image files yet.
+
+             style: Runs a markdown linter on each slide file, using our own style
+                    definition.
+
 
   * release [type]
       Orchestrate a courseware release. Not yet implemented. Defaults to `point`.
