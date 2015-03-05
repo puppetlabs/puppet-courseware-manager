@@ -82,6 +82,12 @@ end
 # grab the arguments after we've scraped the options out
 verb, *subject = ARGV.collect {|arg| arg.to_sym }
 
+if verb == :help
+  require 'courseware/help'
+  Courseware.help
+  exit
+end
+
 courseware = Courseware.new(config, configfile)
 
 case verb
@@ -106,10 +112,6 @@ when :release
 
 when :review
   courseware.review
-
-when :help
-  require 'courseware/help'
-  courseware.help
 
 else
   $logger.warn "Unknown verb: #{verb}"
