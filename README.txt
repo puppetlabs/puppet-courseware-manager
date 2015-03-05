@@ -48,7 +48,7 @@ DESCRIPTION
            missing: Lists all slides that are missing. Note that this does not check
                     for missing image files yet.
 
-             style: Runs a markdown linter on each slide file, using our own style
+              lint: Runs a markdown linter on each slide file, using our own style
                     definition.
 
 

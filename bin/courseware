@@ -104,7 +104,7 @@ when :generate, :update
   courseware.generate subject
 
 when :validate
-  subject = [:obsolete, :missing, :style] if subject.empty?
+  subject = [:obsolete, :missing, :lint] if subject.empty?
   courseware.validate subject
 
 when :release

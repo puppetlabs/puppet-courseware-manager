@@ -72,8 +72,8 @@ class Courseware
       when :missing
         @manager.missing
 
-      when :style
-        @manager.style
+      when :lint
+        @manager.lint
 
       else
         $logger.error "I don't know how to do that yet!"

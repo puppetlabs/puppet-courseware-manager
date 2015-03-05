@@ -42,7 +42,7 @@ class Courseware::Manager
     end
   end
 
-  def style
+  def lint
     puts "Checking Markdown style:"
     style  = File.join(@config[:cachedir], 'templates', 'markdown_style.rb')
     style  = File.exists?(style) ? style : 'all'
