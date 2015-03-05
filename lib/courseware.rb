@@ -11,7 +11,7 @@ class Courseware
     @cache      = Courseware::Cache.new(config)
     @repository = Courseware::Repository.new(config)
     @generator  = Courseware::Generator.new(config)
-    @manager    = Courseware::Manager.new(config)
+    @manager    = Courseware::Manager.new(config, @repository)
   end
 
   def options(opts)
@@ -64,7 +64,24 @@ class Courseware
 
   def validate(subject)
     $logger.debug "Validating #{subject}"
-    $logger.error "I don't know how to do that yet!"
+    subject.each do |item|
+      case item
+      when :obsolete
+        @manager.obsolete
+
+      when :missing
+        @manager.missing
+
+      when :style
+        @manager.style
+
+      else
+        $logger.error "I don't know how to do that yet!"
+      end
+    end
+
+    $logger.warn "Found #{@manager.errors} errors and #{@manager.warnings} warnings."
+    exit @manager.errors + @manager.warnings
   end
 
   def release(subject)
