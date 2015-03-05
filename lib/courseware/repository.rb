@@ -64,11 +64,11 @@ class Courseware::Repository
   end
 
   def on_branch?(branch='master')
-    raise "You do not appear to be on the #{branch} branch" unless `git symbolic-ref -q --short HEAD`.chomp == branch
+    `git symbolic-ref -q --short HEAD`.chomp == branch
   end
 
   def clean?
-    raise "Your working directory has local modifications." unless system('git diff-index --quiet HEAD')
+    system('git diff-index --quiet HEAD')
   end
 
   def branch_exists?(branch)

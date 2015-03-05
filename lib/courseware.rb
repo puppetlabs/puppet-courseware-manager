@@ -35,6 +35,15 @@ class Courseware
       when :config
         @generator.saveconfig @configfile
 
+      when :styles
+        @generator.styles
+
+      when :links
+        @generator.links
+
+      when :skeleton
+        @generator.skeleton
+
       end
     end
 

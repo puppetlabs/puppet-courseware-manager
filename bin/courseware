@@ -51,6 +51,7 @@ config.merge!(cmdlineopts)
 # finally, apply defaults to any unset options
 config[:templates]            ||= 'git@github.com:puppetlabs/courseware-templates.git'
 config[:cachedir]             ||= '~/.courseware'
+config[:stylesheet]           ||= 'courseware.css'
 config[:github]               ||= {}
 config[:github][:public]      ||= 'puppet-training'
 config[:github][:development] ||= 'puppetlabs'
