@@ -1,0 +1,114 @@
+#! /usr/bin/env ruby
+require 'rubygems'
+require 'json'
+require 'optparse'
+require 'logger'
+
+require 'courseware'
+
+configfile  = 'courseware.yaml'
+cmdlineopts = {}
+optparse = OptionParser.new { |opts|
+    opts.banner = "Usage : courseware <verb> [subject] [options]
+
+        Manage the development lifecycle of Puppet Labs courseware. This tool is not
+        required for presenting the material or for contributing minor updates.
+
+        Type courseware help for full usage instructions.
+
+"
+
+    opts.on("-c CONFIG", "--config CONFIG", "Choose an alternate configuration file. Defaults to #{configfile}") do |opt|
+        configfile = File.expand_path(opt)
+        raise ArgumentError, "No such file: #{configfile}" unless File.exists? configfile
+    end
+
+    opts.on("-d", "--debug", "Display debugging messages") do
+        cmdlineopts[:debug] = true
+    end
+
+    opts.separator('')
+
+    opts.on("-v", "--version", "Print out the version") do
+        require 'courseware/version'
+        puts Courseware::VERSION
+        exit
+    end
+
+    opts.on("-h", "--help", "Displays this help") do
+        puts opts
+        exit
+    end
+}
+optparse.parse!
+
+# Search for config file. Expand path in case we're using the default unexpanded.
+config   = JSON.parse(File.read(File.expand_path(configfile))) rescue nil
+config ||= JSON.parse(File.read(File.expand_path('courseware.json'))) rescue nil
+config ||= JSON.parse(File.read(File.expand_path('../courseware.json'))) rescue {}
+# defer to command line overrides
+config.merge!(cmdlineopts)
+# finally, apply defaults to any unset options
+config[:templates]            ||= 'git@github.com:puppetlabs/courseware-templates.git'
+config[:cachedir]             ||= '~/.courseware'
+config[:github]               ||= {}
+config[:github][:public]      ||= 'puppet-training'
+config[:github][:development] ||= 'puppetlabs'
+config[:github][:repository]  ||= 'courseware'
+config[:pdf]                  ||= {}
+config[:pdf][:author]         ||= 'Puppet Labs'
+config[:pdf][:subject]        ||= 'http://puppetlabs.com/learn'
+config[:pdf][:protection]     ||= true
+config[:pdf][:watermark]      ||= false
+
+# expand out all path shortcuts in one single place.
+[ :cachedir ].each do |path|
+  config[path] = File.expand_path(config[path])
+end
+
+# Log to stdout
+$logger = Logger.new(STDOUT)
+if config[:debug]
+  $logger.level = Logger::DEBUG
+else
+  $logger.level = Logger::WARN
+  $logger.formatter = proc do |severity, datetime, progname, msg|
+      "#{severity}: #{msg}\n"
+  end
+end
+
+# grab the arguments after we've scraped the options out
+verb, *subject = ARGV.collect {|arg| arg.to_sym }
+
+courseware = Courseware.new(config, configfile)
+
+case verb
+when :print
+  subject = [:handouts, :exercises, :solutions] if subject.empty?
+  courseware.print subject
+when :watermark
+  subject = [:handouts, :exercises, :solutions] if subject.empty?
+  courseware.options(:section => :pdf, :watermark => true)
+  courseware.print subject
+
+when :generate, :update
+  subject = [:styles] if subject.empty?
+  courseware.generate subject
+
+when :validate
+  subject = [:obsolete, :missing, :style] if subject.empty?
+  courseware.validate subject
+
+when :release
+  courseware.release subject
+
+when :review
+  courseware.review
+
+when :help
+  require 'courseware/help'
+  courseware.help
+
+else
+  $logger.warn "Unknown verb: #{verb}"
+end
