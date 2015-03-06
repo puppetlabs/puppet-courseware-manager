@@ -34,24 +34,23 @@ class Courseware
       :prefix  => @manager.prefix,
       :version => @repository.current(@manager.prefix),
     }
-    printer = Courseware::Printer.new(@config, opts)
+    Courseware::Printer.new(@config, opts) do |printer|
+      subject.each do |item|
+        case item
+        when :handouts
+          printer.handouts
 
-    subject.each do |item|
-      case item
-      when :handouts
-        printer.handouts
+        when :exercises
+          printer.exercises
 
-      when :exercises
-        printer.exercises
+        when :solutions
+          printer.solutions
 
-      when :solutions
-        printer.solutions
-
-      else
-        $logger.error "The #{item} document type does not exist."
+        else
+          $logger.error "The #{item} document type does not exist."
+        end
       end
     end
-    printer.clear
   end
 
   def generate(subject)
