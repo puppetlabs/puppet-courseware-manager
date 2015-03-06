@@ -12,7 +12,7 @@ class Courseware::Printer
     @pdfopts << " --disallow-modify" if @config[:pdf][:protected]
 
     if @config[:pdf][:watermark]
-      if password = Courseware.question("Enter desired password: ")
+      if password = Courseware.question('Enter desired password:')
         encrypt = " --encrypt --user-password '#{password}'"
       else
         encrypt = ''
@@ -21,7 +21,7 @@ class Courseware::Printer
       style = templates = File.join(@config[:cachedir], 'templates', 'watermark.css')
       @pdfopts << " --style=#{style} #{encrypt}"
 
-      @suffix = '-w' if @config[:pdf][:watermark]
+      @suffix = '-w'
     end
 
     FileUtils.mkdir(config[:output]) unless File.directory?(config[:output])
