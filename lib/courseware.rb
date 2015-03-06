@@ -109,7 +109,16 @@ class Courseware
 
   def release(subject)
     $logger.debug "Releasing #{subject}"
-    $logger.error "I don't know how to do that yet!"
+    case subject
+    when :point
+      @manager.pointrelease
+
+    when :quarterly
+      @manager.quarterlyrelease
+
+    else
+      $logger.error "I don't know how to do that yet!"
+    end
   end
 
   def review

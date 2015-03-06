@@ -111,7 +111,8 @@ when :validate
   courseware.validate subject
 
 when :release
-  courseware.release subject
+  subject = [:point] if subject.empty?
+  courseware.release subject.first
 
 when :review
   courseware.review

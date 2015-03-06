@@ -16,7 +16,7 @@ class Courseware
     [ 'y', 'yes', '' ].include? STDIN.gets.strip.downcase
   end
 
-  def self.provide_bailout(message)
+  def self.bailout?(message)
     print "#{message} Continue? [Y/n]: "
     raise "User cancelled" unless [ 'y', 'yes', '' ].include? STDIN.gets.strip.downcase
   end
@@ -29,8 +29,18 @@ class Courseware
     question('Please enter the component ID or copy & paste in its URL:', initial)[/(\d*)$/]
   end
 
-  def self.grep(match, filename, warning="String '#{match}' not found in #{filename}")
-    raise warning unless File.read(filename) =~ Regexp.new(match)
+  def self.grep(match, filename)
+    File.read(filename) =~ Regexp.new(match)
+  end
+
+  def self.increment(version)
+    pemajor, major, minor = version.split('.')
+    "#{pemajor}.#{major}.#{minor.to_i + 1}"
+  end
+
+  def self.majversion(version)
+    pemajor, major, minor = version.split('.')
+    "#{pemajor}.#{major.to_i + 1}.0"
   end
 
 end

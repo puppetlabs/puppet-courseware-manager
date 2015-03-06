@@ -41,6 +41,12 @@ class Courseware::Printer
     end
   end
 
+  def print
+    handouts
+    exercises
+    solutions
+  end
+
   def handouts
     puts "Generating handouts pdf for #{@course} #{@version}..."
 

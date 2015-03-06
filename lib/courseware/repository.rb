@@ -13,17 +13,6 @@ class Courseware::Repository
     end
   end
 
-
-  def toplevel
-    message = 'This task should be run from the repository root'
-    raise message unless Dir.pwd == `git rev-parse --show-toplevel`.chomp
-  end
-
-  def courselevel
-    message = 'This task must be run from within a course directory'
-    raise message unless File.expand_path("#{Dir.pwd}/..") == `git rev-parse --show-toplevel`.chomp
-  end
-
   def tag(tag, message=nil)
     if tag
       system("git tag -a #{tag} -m '#{message}'")
@@ -73,6 +62,14 @@ class Courseware::Repository
 
   def branch_exists?(branch)
     `git branch --list #{branch}` == branch
+  end
+
+  def toplevel?
+    Dir.pwd == `git rev-parse --show-toplevel`.chomp
+  end
+
+  def courselevel?
+    File.expand_path("#{Dir.pwd}/..") == `git rev-parse --show-toplevel`.chomp
   end
 
   def releasenotes(last, version)
