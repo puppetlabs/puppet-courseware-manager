@@ -2,6 +2,7 @@ class Courseware
   require 'courseware/cache'
   require 'courseware/generator'
   require 'courseware/manager'
+  require 'courseware/printer'
   require 'courseware/repository'
   require 'courseware/utils'
 
@@ -28,6 +29,29 @@ class Courseware
 
   def print(subject)
     $logger.debug "Printing #{subject}"
+    opts = {
+      :course  => @manager.coursename,
+      :prefix  => @manager.prefix,
+      :version => @repository.current(@manager.prefix),
+    }
+    printer = Courseware::Printer.new(@config, opts)
+
+    subject.each do |item|
+      case item
+      when :handouts
+        printer.handouts
+
+      when :exercises
+        printer.exercises
+
+      when :solutions
+        printer.solutions
+
+      else
+        $logger.error "The #{item} document type does not exist."
+      end
+    end
+    printer.clear
   end
 
   def generate(subject)
@@ -92,6 +116,11 @@ class Courseware
   def review
     $logger.debug "Starting quarterly review."
     $logger.error "I don't know how to do that yet!"
+  end
+
+  def debug
+    require 'pry'
+    binding.pry
   end
 
 end

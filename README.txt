@@ -19,7 +19,7 @@ DESCRIPTION
         solutions: Generate the solution guide
 
   * watermark
-      Render watermarked PDF files. Accepts same arguements as the `print` verb.
+      Render watermarked PDF files. Accepts same arguments as the `print` verb.
 
   * generate or update
       Build new or update certain kinds of configuration. By default, this will

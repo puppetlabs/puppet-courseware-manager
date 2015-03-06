@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.files            += Dir.glob("doc/**/*")
 
   s.add_dependency      "mdl"
+  s.add_dependency      "showoff"
 
   s.description       = <<-desc
   Manage the development lifecycle of Puppet Labs courseware. This tool is not

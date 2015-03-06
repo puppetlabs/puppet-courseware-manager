@@ -17,5 +17,14 @@ class Courseware::Manager
     end
   end
 
+  def update_partner_pres
+    return unless @config.include? :partner
+
+    $logger.debug 'Creating partner presentation'
+    partner = JSON.parse(File.read(@config[:presfile]))
+    partner['issues'] = @config[:collector] if @config.include? :collector
+    raise 'Partner patch failed!' unless File.write(@config[:partner], JSON.pretty_generate(partner))
+  end
+
 
 end

@@ -53,6 +53,9 @@ config[:templates]            ||= 'git@github.com:puppetlabs/courseware-template
 config[:cachedir]             ||= '~/.courseware'
 config[:stylesheet]           ||= 'courseware.css'
 config[:presfile]             ||= 'showoff.json'
+config[:partner]              ||= 'partner.json'
+config[:output]               ||= 'pdf'
+config[:collector]            ||= 'http://puppetlabs.com/training/issues?s='
 config[:github]               ||= {}
 config[:github][:public]      ||= 'puppet-training'
 config[:github][:development] ||= 'puppetlabs'
@@ -60,7 +63,7 @@ config[:github][:repository]  ||= 'courseware'
 config[:pdf]                  ||= {}
 config[:pdf][:author]         ||= 'Puppet Labs'
 config[:pdf][:subject]        ||= 'http://puppetlabs.com/learn'
-config[:pdf][:protection]     ||= true
+config[:pdf][:protected]      ||= true
 config[:pdf][:watermark]      ||= false
 
 # expand out all path shortcuts in one single place.
@@ -112,6 +115,9 @@ when :release
 
 when :review
   courseware.review
+
+when :shell
+  courseware.debug
 
 else
   $logger.warn "Unknown verb: #{verb}"
