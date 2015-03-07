@@ -4,13 +4,7 @@ class Courseware::Repository
   def initialize(config)
     @config = config
 
-    if system('git status >/dev/null 2>&1')
-      @valid_repo = true
-      configure_courseware
-    else
-      @valid_repo = false
-      $logger.debug "Not in a courseware repository"
-    end
+    configure_courseware
   end
 
   def tag(tag, message=nil)
