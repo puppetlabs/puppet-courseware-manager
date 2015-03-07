@@ -46,6 +46,25 @@ class Courseware::Repository
     system("git push upstream --delete #{branch}")
   end
 
+  def commit(*args)
+    message = args.pop
+    args.each do |file|
+      system('git', 'add', file)
+    end
+    system('git', 'commit', '-m', message)
+  end
+
+  def discard(*args)
+    args.each do |file|
+      $logger.warn "Discarding changes to #{file}"
+      system('git', 'checkout', '--', file)
+    end
+  end
+
+  def last_commit
+    `git show --name-status --no-color`.chomp.gsub("\t", '    ')
+  end
+
   def on_branch?(branch='master')
     `git symbolic-ref -q --short HEAD`.chomp == branch
   end
@@ -144,4 +163,7 @@ private
     end
   end
 
+  def self.repository?
+    system('git status >/dev/null 2>&1')
+  end
 end

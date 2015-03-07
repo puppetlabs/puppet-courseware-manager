@@ -10,9 +10,14 @@ class Courseware
     @config     = config
     @configfile = configfile
     @cache      = Courseware::Cache.new(config)
-    @repository = Courseware::Repository.new(config)
     @generator  = Courseware::Generator.new(config)
-    @manager    = Courseware::Manager.new(config, @repository)
+
+    if Courseware::Repository.repository?
+      @repository = Courseware::Repository.new(config)
+      @manager    = Courseware::Manager.new(config, @repository)
+    else
+      $logger.debug "Running outside a valid git repository."
+    end
   end
 
   def options(opts)

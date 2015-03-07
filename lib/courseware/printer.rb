@@ -48,21 +48,21 @@ class Courseware::Printer
   end
 
   def handouts
-    puts "Generating handouts pdf for #{@course} #{@version}..."
+    $logger.info "Generating handouts pdf for #{@course} #{@version}..."
 
     system('showoff static print')
     system("prince static/index.html #{@pdfopts} -o #{filename}")
   end
 
   def exercises
-    puts "Generating exercise guide pdf for #{@course} #{@version}..."
+    $logger.info "Generating exercise guide pdf for #{@course} #{@version}..."
 
     system('showoff static supplemental exercises')
     system("prince static/index.html #{@pdfopts} -o #{filename('exercises')}")
   end
 
   def solutions
-    puts "Generating solutions guide pdf for #{@course} #{@version}..."
+    $logger.info "Generating solutions guide pdf for #{@course} #{@version}..."
 
     system('showoff static supplemental solutions')
     system("prince static/index.html #{@pdfopts} -o #{filename('solutions')}")

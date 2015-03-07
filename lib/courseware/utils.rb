@@ -1,3 +1,5 @@
+require 'word_wrap'
+
 class Courseware
   def self.question(message, default=nil)
     if default
@@ -18,7 +20,24 @@ class Courseware
 
   def self.bailout?(message)
     print "#{message} Continue? [Y/n]: "
-    raise "User cancelled" unless [ 'y', 'yes', '' ].include? STDIN.gets.strip.downcase
+    unless [ 'y', 'yes', '' ].include? STDIN.gets.strip.downcase
+      if block_given?
+        yield
+      end
+      raise "User cancelled"
+    end
+  end
+
+  def self.dialog(header, body, width=80)
+    width -= 6
+
+    puts '################################################################################'
+    puts "## #{header[0..width].center(width)} ##"
+    puts '##----------------------------------------------------------------------------##'
+    body.wrap(width).split("\n").each do |line|
+      printf "## %-#{width}s ##\n", line
+    end
+    puts '################################################################################'
   end
 
   def self.get_component(initial)

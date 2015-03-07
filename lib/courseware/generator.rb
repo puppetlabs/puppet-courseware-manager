@@ -9,7 +9,7 @@ class Courseware::Generator
   end
 
   def saveconfig(configfile)
-    $logger.warn "Saving configuration"
+    $logger.info "Saving configuration to #{configfile}"
     File.write(configfile, @config.to_yaml)
   end
 
@@ -26,7 +26,7 @@ class Courseware::Generator
 
   def styles(course=nil, version=nil)
     File.open(@config[:stylesheet], 'w') do |f|
-      $logger.warn "Updating stylesheet for #{course} version #{version}."
+      $logger.info "Updating stylesheet for #{course} version #{version}."
       template = File.join(@config[:cachedir], 'templates', 'showoff.css.erb')
       f.write ERB.new(File.read(template), nil, '-').result(binding)
     end
@@ -35,7 +35,7 @@ class Courseware::Generator
   def links
     filename = File.join(@config[:cachedir], 'templates', 'links.json')
     JSON.parse(File.read(filename)).each do |file, target|
-      $logger.warn "Linking #{file} -> #{target}"
+      $logger.info "Linking #{file} -> #{target}"
       FileUtils.rm_rf(file) if File.exists?(file)
       FileUtils.ln_sf(target, file)
     end
@@ -64,6 +64,7 @@ class Courseware::Generator
     metadata['edit']        = "https://github.com/puppetlabs/#{@config[:github][:repository]}/edit/qa/review/#{coursename}/#{location}/"
     metadata['issues']      = "http://tickets.puppetlabs.com/secure/CreateIssueDetails!init.jspa?pid=10302&issuetype=1&components=#{component}&priority=6&summary="
 
+    $logger.info "Updating presentation file #{@config[:presfile]}"
     File.write(@config[:presfile], JSON.pretty_generate(metadata))
     coursename
   end

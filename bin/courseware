@@ -43,9 +43,9 @@ optparse = OptionParser.new { |opts|
 optparse.parse!
 
 # Search for config file. Expand path in case we're using the default unexpanded.
-config   = JSON.parse(File.read(File.expand_path(configfile))) rescue nil
-config ||= JSON.parse(File.read(File.expand_path('courseware.json'))) rescue nil
-config ||= JSON.parse(File.read(File.expand_path('../courseware.json'))) rescue {}
+config   = YAML.load_file(File.expand_path(configfile)) rescue nil
+config ||= YAML.load_file(File.expand_path('courseware.yaml')) rescue nil
+config ||= YAML.load_file(File.expand_path('../courseware.yaml')) rescue {}
 # defer to command line overrides
 config.merge!(cmdlineopts)
 # finally, apply defaults to any unset options
@@ -76,7 +76,7 @@ $logger = Logger.new(STDOUT)
 if config[:debug]
   $logger.level = Logger::DEBUG
 else
-  $logger.level = Logger::WARN
+  $logger.level = Logger::INFO
   $logger.formatter = proc do |severity, datetime, progname, msg|
       "#{severity}: #{msg}\n"
   end
@@ -93,33 +93,38 @@ end
 
 courseware = Courseware.new(config, configfile)
 
-case verb
-when :print
-  subject = [:handouts, :exercises, :solutions] if subject.empty?
-  courseware.print subject
-when :watermark
-  subject = [:handouts, :exercises, :solutions] if subject.empty?
-  courseware.options(:section => :pdf, :watermark => true)
-  courseware.print subject
+begin
+  case verb
+  when :print
+    subject = [:handouts, :exercises, :solutions] if subject.empty?
+    courseware.print subject
+  when :watermark
+    subject = [:handouts, :exercises, :solutions] if subject.empty?
+    courseware.options(:section => :pdf, :watermark => true)
+    courseware.print subject
 
-when :generate, :update
-  subject = [:styles] if subject.empty?
-  courseware.generate subject
+  when :generate, :update
+    subject = [:styles] if subject.empty?
+    courseware.generate subject
 
-when :validate
-  subject = [:obsolete, :missing, :lint] if subject.empty?
-  courseware.validate subject
+  when :validate
+    subject = [:obsolete, :missing, :lint] if subject.empty?
+    courseware.validate subject
 
-when :release
-  subject = [:point] if subject.empty?
-  courseware.release subject.first
+  when :release
+    subject = [:point] if subject.empty?
+    courseware.release subject.first
 
-when :review
-  courseware.review
+  when :review
+    courseware.review
 
-when :shell
-  courseware.debug
+  when :shell
+    courseware.debug
 
-else
-  $logger.warn "Unknown verb: #{verb}"
+  else
+    $logger.warn "Unknown verb: #{verb}"
+  end
+rescue RuntimeError => e
+  puts e.message
+  puts e.backtrace.join("\n\t") if config[:debug]
 end

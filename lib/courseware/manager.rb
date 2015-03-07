@@ -31,14 +31,18 @@ class Courseware::Manager
   end
 
   def pointrelease
-    version = Courseware.increment(@repository.current(@coursename))
-
     raise 'This task must be run from within a course directory' unless @repository.courselevel?
-    raise 'Not on the master branch' unless @repository.on_branch? 'master'
-    raise "Release notes not updated for #{version}" unless Courseware.grep(version, 'Release-Notes.md')
+    raise 'You should release from the master branch' unless @repository.on_branch? 'master'
     raise 'Your working directory has local modifications' unless @repository.clean?
 
+    version = Courseware.increment(@repository.current(@coursename))
     Courseware.bailout?("Building a release for #{@coursename} version #{version}.")
+
+    raise "Release notes not updated for #{version}" unless Courseware.grep(version, 'Release-Notes.md')
+
+    Courseware.dialog('Last Repository Commit', @repository.last_commit)
+    Courseware.bailout?('Abort now if the commit message displayed is not what you expected.')
+
     @generator.styles(@coursename, version)
 
     opts = {
@@ -50,11 +54,15 @@ class Courseware::Manager
       printer.print
     end
 
-    system("open pdf >/dev/null 2>&1")
-    Courseware.bailout?('Please inspect the generated PDF files and abort if corrections must be made.')
+    system("open #{@config[:output]} >/dev/null 2>&1")
+    Courseware.dialog('Point of No Return', 'Proceeding past this point will result in permanent repository changes.')
+    Courseware.bailout?('Please inspect the generated PDF files and abort if corrections must be made.') do
+      @repository.discard(@config[:stylesheet])
+    end
 
     update_partner_pres
-#    @repository.tag("#{@prefix}-#{@version}", "Releasing #{@coursename} version #{@version}")
+    @repository.commit(@config[:partner], @config[:stylesheet], "Updating for #{@coursename} release #{version}")
+    @repository.tag("#{@prefix}-#{version}", "Releasing #{@coursename} version #{version}")
     puts "Release shipped. Please upload PDF files to printer and break out the bubbly."
   end
 

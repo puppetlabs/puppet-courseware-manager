@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency      "mdl"
   s.add_dependency      "showoff"
+  s.add_dependency      "word_wrap"
 
   s.description       = <<-desc
   Manage the development lifecycle of Puppet Labs courseware. This tool is not
