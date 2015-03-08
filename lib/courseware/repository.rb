@@ -1,7 +1,9 @@
 require 'fileutils'
+require 'rubygems'
 class Courseware::Repository
 
   def initialize(config)
+    raise 'This is not a courseware repository' unless Courseware::Repository.repository?
     @config = config
 
     configure_courseware
@@ -105,14 +107,13 @@ class Courseware::Repository
   end
 
   # This gets a list of all tags matching a prefix.
-  # Gem::Version is used simply for semantic version comparisons.
   def tags(prefix, count=1)
-    tags = `git tag -l '#{prefix}*'`.split("\n").sort_by { |tag| Gem::Version.new(tag.gsub(/^.*-?v/, '')) }.last(count)
+    tags = `git tag -l '#{prefix}*'`.split("\n").sort_by { |tag| version(tag) }.last(count)
     tags.empty? ? ['v0.0.0'] : tags
   end
 
   def current(prefix)
-    [point_release(prefix), quarterly_release].max_by { |tag| Gem::Version.new(tag.gsub(/^.*-?v/, '')) }
+    [point_release(prefix), quarterly_release].max_by { |tag| version(tag) }
   end
 
   def point_release(prefix)
@@ -161,6 +162,11 @@ private
         raise "Could not add the '#{remote}' remote."
       end
     end
+  end
+
+  # Gem::Version is used simply for semantic version comparisons.
+  def version(tag)
+    Gem::Version.new(tag.gsub(/^.*-?v/, '')) rescue Gem::Version.new(0)
   end
 
   def self.repository?
