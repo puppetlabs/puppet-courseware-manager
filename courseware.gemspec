@@ -3,7 +3,7 @@ require 'courseware/version'
 require 'date'
 
 Gem::Specification.new do |s|
-  s.name              = "pamela"
+  s.name              = "courseware"
   s.version           = Courseware::VERSION
   s.date              = Date.today.to_s
   s.summary           = "Manage the development lifecycle of Puppet Labs courseware."
@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.has_rdoc          = false
   s.require_path      = "lib"
   s.executables       = %w( courseware )
-  s.files             = %w( README.md LICENSE )
+  s.files             = %w( README.txt LICENSE )
   s.files            += Dir.glob("lib/**/*")
   s.files            += Dir.glob("bin/**/*")
   s.files            += Dir.glob("doc/**/*")

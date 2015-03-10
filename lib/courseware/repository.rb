@@ -34,7 +34,11 @@ class Courseware::Repository
 
   def checkout(branch, pull=false)
     system("git checkout #{branch}")
-    system("git pull upstream #{branch}") if pull
+    pull(branch) if pull
+  end
+
+  def pull(branch)
+    system('git', 'pull', 'upstream', branch)
   end
 
   def merge(branch)

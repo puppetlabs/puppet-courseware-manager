@@ -83,6 +83,7 @@ class Courseware
     end
 
     n = 0
+    puts
     puts "  Updated Release Notes    Outdated Release Notes    Missing Release Notes"
     puts "----------------------------------------------------------------------------"
     [ updated.size, outdated.size, missing.size ].max.times do
@@ -90,5 +91,6 @@ class Courseware
 
       n += 1
     end
+    puts
   end
 end
