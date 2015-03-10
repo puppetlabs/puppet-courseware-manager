@@ -129,8 +129,8 @@ class Courseware
   end
 
   def review
-    $logger.debug "Starting quarterly review."
-    $logger.error "I don't know how to do that yet!"
+    $logger.info "Starting quarterly review."
+    @manager.review
   end
 
   def debug

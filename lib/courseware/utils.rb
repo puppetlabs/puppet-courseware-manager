@@ -28,14 +28,16 @@ class Courseware
     end
   end
 
-  def self.dialog(header, body, width=80)
+  def self.dialog(header, body=nil, width=80)
     width -= 6
 
     puts '################################################################################'
     puts "## #{header[0..width].center(width)} ##"
-    puts '##----------------------------------------------------------------------------##'
-    body.wrap(width).split("\n").each do |line|
-      printf "## %-#{width}s ##\n", line
+    if body
+      puts '##----------------------------------------------------------------------------##'
+      body.wrap(width).split("\n").each do |line|
+        printf "## %-#{width}s ##\n", line
+      end
     end
     puts '################################################################################'
   end
@@ -52,14 +54,41 @@ class Courseware
     File.read(filename) =~ Regexp.new(match)
   end
 
-  def self.increment(version)
+  def self.increment(version, quarterly=false)
     pemajor, major, minor = version.split('.')
-    "#{pemajor}.#{major}.#{minor.to_i + 1}"
+    if quarterly
+      "#{pemajor}.#{major.to_i + 1}.0"
+    else
+      "#{pemajor}.#{major}.#{minor.to_i + 1}"
+    end
   end
 
-  def self.majversion(version)
-    pemajor, major, minor = version.split('.')
-    "#{pemajor}.#{major.to_i + 1}.0"
-  end
+  def self.release_notes_table(version)
+    updated  = []
+    outdated = []
+    missing  = []
+    Dir.glob('*').select do |course|
+      next unless File.directory? course
+      next if course =~ /^_/
 
+      notes = "#{course}/Release-Notes.md"
+      case
+      when ! File.exist?(notes)
+        missing << course
+      when Courseware.grep(version, notes)
+        updated << course
+      else
+        outdated << course
+      end
+    end
+
+    n = 0
+    puts "  Updated Release Notes    Outdated Release Notes    Missing Release Notes"
+    puts "----------------------------------------------------------------------------"
+    [ updated.size, outdated.size, missing.size ].max.times do
+      printf "  %20s    %20s    %20s\n", updated[n], outdated[n], missing[n]
+
+      n += 1
+    end
+  end
 end

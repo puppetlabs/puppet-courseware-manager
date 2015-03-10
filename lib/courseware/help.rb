@@ -62,7 +62,13 @@ class Courseware
                              revision number.
 
           * review
-              Initiate and manage the quarterly review process. Not yet implemented.
+              Initiate and manage the quarterly review process. Run this take and make
+              needed changes on the QA branch on GitHub using the Edit Slide button in the
+              Showoff toolbar. Be aware that the bar for changes here is rather high. Only
+              correct TINY typos and spelling or grammar mistakes or absolute blockers.
+              Anything more should ve filed as a ticket and resolved in a regular release
+              cycle. The quarterly release should be polished, but should not have major
+              changes.
 
           * help
               You're looking at it.

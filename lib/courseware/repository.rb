@@ -76,7 +76,7 @@ class Courseware::Repository
   end
 
   def branch_exists?(branch)
-    `git branch --list #{branch}` == branch
+    `git branch --list '#{branch}'` != ''
   end
 
   def toplevel?
@@ -108,6 +108,7 @@ class Courseware::Repository
 
   # This gets a list of all tags matching a prefix.
   def tags(prefix, count=1)
+    prefix ||= 'v' # even if we pass in nil, we want to default to this
     tags = `git tag -l '#{prefix}*'`.split("\n").sort_by { |tag| version(tag) }.last(count)
     tags.empty? ? ['v0.0.0'] : tags
   end
