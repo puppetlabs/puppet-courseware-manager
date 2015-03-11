@@ -146,6 +146,9 @@ private
         ensure_remote('courseware', "https://github.com/#{courseware}.git")
         ensure_remote('upstream',   "https://github.com/#{upstream}.git")
       end
+    elsif origin.empty?
+      $logger.warn 'Your origin remote is not set properly.'
+      $logger.warn 'Generating PDF files and other local operations will work properly, but many repository actions will fail.'
     else
       raise "Your origin (#{origin}) does not appear to be configured correctly."
     end

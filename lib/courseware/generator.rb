@@ -18,10 +18,24 @@ class Courseware::Generator
     FileUtils.cp_r(source, dest)
 
     Dir.chdir(dest) do
-      links
       course = metadata()
       styles(course, '0.0.1')
+
+      default = Courseware::Repository.repository? ? 'P' : 'S'
+      case Courseware.question('Should this be a (S)tandalone course or share assets with a (P)arent repository?', default)
+      when 's','S'
+        shared
+        $logger.warn "Don't forget to create the GitHub repository for your new course following the EDU standard."
+      else
+        links
+        $logger.warn "Don't forget to add, commit, & push this new course directory to the repository."
+      end
     end
+  end
+
+  def shared
+    source = File.join(@config[:cachedir], 'templates', 'shared', '.')
+    FileUtils.cp_r(source, '.')
   end
 
   def styles(course=nil, version=nil)
