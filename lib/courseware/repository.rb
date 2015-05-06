@@ -93,6 +93,7 @@ class Courseware::Repository
 
   def releasenotes(last, version)
     str = "### #{version}\n"
+    pwd = File.basename(Dir.pwd)
 
     `git log --pretty="format:%h]X[%aN]X[%aE]X[%cd]X[%s" #{last}..HEAD`.split("\n").each do |line|
       commit, author, email, date, title = line.split(']X[')
@@ -101,7 +102,7 @@ class Courseware::Repository
       next if title =~ /^Merge pull request #/
 
       # Bail if the commit didn't change this course
-      next unless `git diff --name-only #{commit}^..#{commit} 2>/dev/null` =~ /^#{File.basename(Dir.pwd)}/
+      next unless `git diff --name-only #{commit}^..#{commit} 2>/dev/null` =~ /^#{pwd}/
 
       str << "* #{title}\n"
       str << "    * _[#{author}](#{email}): #{date}_\n"

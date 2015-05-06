@@ -61,6 +61,8 @@ class Courseware
                              are ready to go, make a release. This will increment the minor
                              revision number.
 
+                      notes: Display release notes since last release and copy to clipboard.
+
           * review
               Initiate and manage the quarterly review process. Run this take and make
               needed changes on the QA branch on GitHub using the Edit Slide button in the
