@@ -31,6 +31,31 @@ class Courseware::Manager
     raise 'Partner patch failed!' unless File.write(@config[:partner], JSON.pretty_generate(partner))
   end
 
+  def releasenotes
+    courselevel?
+    master?
+    clean?
+
+    current = @repository.current(@coursename)
+    version = Courseware.increment(current)
+
+    # if the current revision is a quarterly, it won't have a name associated with it
+    tag = current.split('.').last == '0'  ? current: "#{@coursename}-#{current}"
+
+    notes = @repository.releasenotes(tag, version)
+
+    # print to screen
+    puts notes
+
+    # and copy if on OS X
+    begin
+      IO.popen('pbcopy', 'w') { |f| f.puts notes }
+      puts
+      puts "{{ Copied to clipboard }}"
+    rescue
+    end
+  end
+
   def pointrelease
     courselevel?
     master?

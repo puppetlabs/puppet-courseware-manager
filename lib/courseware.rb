@@ -127,6 +127,9 @@ class Courseware
     when :quarterly
       @manager.quarterlyrelease
 
+    when :notes
+      @manager.releasenotes
+
     else
       $logger.error "I don't know how to do that yet!"
     end

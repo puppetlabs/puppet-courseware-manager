@@ -69,6 +69,8 @@ DESCRIPTION
                      are ready to go, make a release. This will increment the minor
                      revision number.
 
+              notes: Display release notes since last release and copy to clipboard.
+
   * review
       Initiate and manage the quarterly review process. Not yet implemented.
 
