@@ -22,15 +22,6 @@ class Courseware::Manager
     end
   end
 
-  def update_partner_pres
-    return unless @config.include? :partner
-
-    $logger.debug 'Creating partner presentation'
-    partner = JSON.parse(File.read(@config[:presfile]))
-    partner['issues'] = @config[:collector] if @config.include? :collector
-    raise 'Partner patch failed!' unless File.write(@config[:partner], JSON.pretty_generate(partner))
-  end
-
   def releasenotes
     courselevel?
     master?
@@ -74,8 +65,7 @@ class Courseware::Manager
       @repository.discard(@config[:stylesheet])
     end
 
-    update_partner_pres
-    @repository.commit(@config[:partner], @config[:stylesheet], "Updating for #{@coursename} release #{version}")
+    @repository.commit(@config[:stylesheet], "Updating for #{@coursename} release #{version}")
     @repository.tag("#{@prefix}-#{version}", "Releasing #{@coursename} version #{version}")
     puts "Release shipped. Please upload PDF files to printer and break out the bubbly."
   end
@@ -160,8 +150,7 @@ class Courseware::Manager
       @repository.checkout('master')
     end
 
-    update_partner_pres
-    @repository.commit(@config[:partner], @config[:stylesheet], "Updating for #{@coursename} release #{version}")
+    @repository.commit(@config[:stylesheet], "Updating for #{@coursename} release #{version}")
     @repository.create(release)
     @repository.merge(release)
     @repository.delete(review)

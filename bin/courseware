@@ -23,6 +23,10 @@ optparse = OptionParser.new { |opts|
         raise ArgumentError, "No such file: #{configfile}" unless File.exists? configfile
     end
 
+    opts.on("-r ENGINE", "--renderer ENGINE", "Choose an alternate rendering engine. (wkhtmltopdf|prince)") do |opt|
+        cmdlineopts[:renderer] = opt.to_sym
+    end
+
     opts.on("-d", "--debug", "Display debugging messages") do
         cmdlineopts[:debug] = true
     end
@@ -53,7 +57,7 @@ config[:templates]            ||= 'git@github.com:puppetlabs/courseware-template
 config[:cachedir]             ||= '~/.courseware'
 config[:stylesheet]           ||= 'courseware.css'
 config[:presfile]             ||= 'showoff.json'
-config[:partner]              ||= 'partner.json'
+config[:renderer]             ||= :wkhtmltopdf
 config[:output]               ||= 'pdf'
 config[:collector]            ||= 'http://puppetlabs.com/training/issues?s='
 config[:github]               ||= {}
@@ -63,8 +67,10 @@ config[:github][:repository]  ||= 'courseware'
 config[:pdf]                  ||= {}
 config[:pdf][:author]         ||= 'Puppet Labs'
 config[:pdf][:subject]        ||= 'http://puppetlabs.com/learn'
+config[:pdf][:password]       ||= 'default'
 config[:pdf][:protected]      ||= true
 config[:pdf][:watermark]      ||= false
+config[:pdf][:license]        ||= nil
 
 # expand out all path shortcuts in one single place.
 [ :cachedir ].each do |path|

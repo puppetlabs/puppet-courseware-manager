@@ -1,0 +1,8 @@
+# Courseware Manager
+
+## Release Notes
+
+### v0.2.0rake print
+* Port to wkhtmltopdf.
+* Abstracted renderer, can use either Prince or wkhtmltopdf.
+* Behaviour change, so minor rev bump.
