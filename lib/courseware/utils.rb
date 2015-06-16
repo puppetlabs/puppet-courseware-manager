@@ -1,4 +1,5 @@
 require 'word_wrap'
+require 'word_wrap/core_ext'
 
 class Courseware
   def self.question(message, default=nil)
