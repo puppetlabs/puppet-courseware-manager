@@ -2,7 +2,10 @@
 
 ## Release Notes
 
-### v0.2.0rake print
+### v0.2.1
+* Enabled content copying.
+
+### v0.2.0
 * Port to wkhtmltopdf.
 * Abstracted renderer, can use either Prince or wkhtmltopdf.
 * Behaviour change, so minor rev bump.
