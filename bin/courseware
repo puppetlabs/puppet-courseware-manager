@@ -131,6 +131,7 @@ begin
     $logger.warn "Unknown verb: #{verb}"
   end
 rescue RuntimeError => e
-  puts e.message
+  puts "Error: #{e.message}"
   puts e.backtrace.join("\n\t") if config[:debug]
+  exit 1
 end

@@ -85,8 +85,11 @@ class Courseware
         when :metadata
           @generator.metadata
 
+        when :rakefile
+          @generator.rakefile
+
         when :shared
-          @generate.shared
+          @generator.shared
 
         else
           $logger.error "I don't know how to generate #{item}!"

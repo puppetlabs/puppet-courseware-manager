@@ -34,8 +34,14 @@ class Courseware::Generator
   end
 
   def shared
-    source = File.join(@config[:cachedir], 'templates', 'shared', '.')
+    source = File.join(@config[:cachedir], 'templates', 'shared')
     FileUtils.cp_r(source, '.')
+  end
+
+  def rakefile
+    raise 'Update the toplevel Rakefile instead.' if File.symlink? 'Rakefile'
+    source = File.join(@config[:cachedir], 'templates', 'Rakefile')
+    FileUtils.cp(source, 'Rakefile')
   end
 
   def styles(course=nil, version=nil)
