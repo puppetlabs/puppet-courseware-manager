@@ -93,21 +93,9 @@ class Courseware::Repository
 
   def releasenotes(last, version)
     str = "### #{version}\n"
-    pwd = File.basename(Dir.pwd)
-
-    `git log --pretty="format:%h]X[%aN]X[%aE]X[%cd]X[%s" #{last}..HEAD`.split("\n").each do |line|
-      commit, author, email, date, title = line.split(']X[')
-
-      # Bail on merge commits, we want to credit the original author
-      next if title =~ /^Merge pull request #/
-
-      # Bail if the commit didn't change this course
-      next unless `git diff --name-only #{commit}^..#{commit} 2>/dev/null` =~ /^#{pwd}/
-
-      str << "* #{title}\n"
-      str << "    * _[#{author}](#{email}): #{date}_\n"
-      str << "    * _#{commit}_\n"
-    end
+    str << "{{{Please summarize the release here}}}\n"
+    str << "\n"
+    str << `git log --no-merges --pretty="format:* (%h) %s [%aN]" #{last}..HEAD -- .`
     str
   end
 
