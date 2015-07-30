@@ -38,22 +38,21 @@ DESCRIPTION
                metadata: Interactively generate or update the `showoff.json` file.
 
   * validate [check]
-      Check the presentation for validity in a case-sensitive fashion. Defaults to
-      running all the checks.
+      Runs validation checks on the presentation. Defaults to running all the checks.
 
       Validators:
           obsolete: Lists all unreferenced images and slides. This reference checks
-                    all slides and all CSS stylesheets.
+                    all slides and all CSS stylesheets. Case sensitive.
 
            missing: Lists all slides that are missing. Note that this does not check
-                    for missing image files yet.
+                    for missing image files yet. Case sensitive.
 
               lint: Runs a markdown linter on each slide file, using our own style
                     definition.
 
 
   * release [type]
-      Orchestrate a courseware release. Not yet implemented. Defaults to `point`.
+      Orchestrate a courseware release. Defaults to `point`.
 
       Puppetlabs trainers are expected to deliver the most current point release
       while training partners also have the option for delivering the most current
