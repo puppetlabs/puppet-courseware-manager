@@ -2,8 +2,12 @@
 
 ## Release Notes
 
+### v0.2.3
+* Improve docs slightly.
+* Simplify release notes generator.
+
 ### v0.2.2
-* Added Rakefile generator
+* Added Rakefile generator.
 
 ### v0.2.1
 * Enabled content copying.

@@ -5,6 +5,7 @@ require 'date'
 Gem::Specification.new do |s|
   s.name              = "courseware"
   s.version           = Courseware::VERSION
+  s.licenses          = ['Apache-2.0']
   s.date              = Date.today.to_s
   s.summary           = "Manage the development lifecycle of Puppet Labs courseware."
   s.homepage          = "http://github.com/puppetlabs/courseware-manager"
@@ -18,9 +19,9 @@ Gem::Specification.new do |s|
   s.files            += Dir.glob("bin/**/*")
   s.files            += Dir.glob("doc/**/*")
 
-  s.add_dependency      "mdl"
-  s.add_dependency      "showoff"
-  s.add_dependency      "word_wrap"
+  s.add_runtime_dependency  "mdl",       '~> 0.2'
+  s.add_runtime_dependency  "showoff",   '~> 0.10'
+  s.add_runtime_dependency  "word_wrap", '~> 1.0'
 
   s.description       = <<-desc
   Manage the development lifecycle of Puppet Labs courseware. This tool is not
