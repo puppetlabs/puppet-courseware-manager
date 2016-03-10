@@ -132,6 +132,12 @@ class Courseware::Printer
       system(*command.flatten, STDERR=>'/dev/null') # TODO: figure out what's not loading
   #    raise 'Error generating PDF files' unless $?.success? # won't work until we figure out the ContentNotFoundError
 
+      if `pdftk #{output} dump_data | grep NumberOfPages`.chomp == 'NumberOfPages: 1'
+        puts "#{output} is empty; aborting and cleaning up."
+        FileUtils.rm(output)
+        return
+      end
+
       scratchfile = File.join(@config[:output], 'scratch.pdf')
       command = ['pdftk', output, 'output', scratchfile]
       command << ['owner_pw', @config[:pdf][:password], 'allow', 'printing', 'CopyContents']
