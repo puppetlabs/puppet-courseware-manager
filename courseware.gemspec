@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.version           = Courseware::VERSION
   s.licenses          = ['Apache-2.0']
   s.date              = Date.today.to_s
-  s.summary           = "Manage the development lifecycle of Puppet Labs courseware."
+  s.summary           = "Manage the development lifecycle of Puppet courseware."
   s.homepage          = "http://github.com/puppetlabs/courseware-manager"
   s.email             = "education@puppetlabs.com"
   s.authors           = ["Ben Ford"]
@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency  "word_wrap", '~> 1.0'
 
   s.description       = <<-desc
-  Manage the development lifecycle of Puppet Labs courseware. This tool is not
+  Manage the development lifecycle of Puppet courseware. This tool is not
   required for presenting the material or for contributing minor updates.
   desc
 end
