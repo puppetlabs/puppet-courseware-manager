@@ -11,7 +11,7 @@ cmdlineopts = {}
 optparse = OptionParser.new { |opts|
     opts.banner = "Usage : courseware <verb> [subject] [options]
 
-        Manage the development lifecycle of Puppet Labs courseware. This tool is not
+        Manage the development lifecycle of Puppet courseware. This tool is not
         required for presenting the material or for contributing minor updates.
 
         Type courseware help for full usage instructions.
@@ -65,8 +65,8 @@ config[:github][:public]      ||= 'puppet-training'
 config[:github][:development] ||= 'puppetlabs'
 config[:github][:repository]  ||= 'courseware'
 config[:pdf]                  ||= {}
-config[:pdf][:author]         ||= 'Puppet Labs'
-config[:pdf][:subject]        ||= 'http://puppetlabs.com/learn'
+config[:pdf][:author]         ||= 'Puppet'
+config[:pdf][:subject]        ||= 'http://learn.puppet.com'
 config[:pdf][:password]       ||= 'default'
 config[:pdf][:protected]      ||= true
 config[:pdf][:watermark]      ||= false

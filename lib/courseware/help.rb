@@ -8,7 +8,7 @@ class Courseware
           courseware [-c CONFIG] [-d] <verb> [subject] [subject] ...
 
         DESCRIPTION
-          Manage the development lifecycle of Puppet Labs courseware. This tool is not
+          Manage the development lifecycle of Puppet courseware. This tool is not
           required for presenting the material or for contributing minor updates.
 
           The following verbs are recognized:

@@ -86,7 +86,7 @@ class Courseware::Printer
               "  * http://www.princexml.com/download/\n"                           +
               "\n"                                                                 +
               "And the license from:\n"                                            +
-              "  * https://confluence.puppetlabs.com/display/EDU/Licenses"
+              "  * https://confluence.puppet.com/display/EDU/Licenses"
 
         Courseware.dialog('Printing toolchain unavailable.', msg)
         return false
@@ -127,7 +127,7 @@ class Courseware::Printer
     when :wkhtmltopdf
       command = ['wkhtmltopdf', '-s', 'Letter', '--print-media-type', '--quiet']
       command << ['--footer-left', "#{@course} #{@version}", '--footer-center', '[page]']
-      command << ['--footer-right', "©#{Time.now.year} Puppet Labs", '--header-center', '[section]']
+      command << ['--footer-right', "©#{Time.now.year} Puppet", '--header-center', '[section]']
       command << ['--title', @course, File.join('static', 'index.html'), output]
       system(*command.flatten, STDERR=>'/dev/null') # TODO: figure out what's not loading
   #    raise 'Error generating PDF files' unless $?.success? # won't work until we figure out the ContentNotFoundError
