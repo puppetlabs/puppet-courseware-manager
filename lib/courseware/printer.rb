@@ -152,7 +152,7 @@ class Courseware::Printer
       command << ['--pdf-title', @course, '--pdf-author', @config[:pdf][:author], '--pdf-subject', @config[:pdf][:subject], '--disallow-modify']
       command << ['--style', @watermark_style] if @config[:pdf][:watermark]
       command << ['--encrypt', '--user-password', @password] if @password
-      command << ['--license-file', config[:pdf][:license]] if (@config[:pdf][:license] and File.exists? @leeconfig[:pdf][:license])
+      command << ['--license-file', @config[:pdf][:license]] if (@config[:pdf][:license] and File.exists? @config[:pdf][:license])
       command << ['-o', output]
       system(*command.flatten)
       raise 'Error generating PDF files' unless $?.success?
