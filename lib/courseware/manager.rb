@@ -27,6 +27,7 @@ class Courseware::Manager
     master?
     clean?
 
+    @repository.update
     current = @repository.current(@coursename)
     version = Courseware.increment(current)
 
@@ -52,6 +53,7 @@ class Courseware::Manager
     master?
     clean?
 
+    @repository.update
     version = Courseware.increment(@repository.current(@coursename))
     Courseware.bailout?("Building a release for #{@coursename} version #{version}.")
 
@@ -75,6 +77,7 @@ class Courseware::Manager
     master?
     clean?
 
+    @repository.update
     version = Courseware.increment(@repository.current(nil), true)
     Courseware.dialog("Creating Quarterly Release for #{version}", 'Please ensure that all courses in the repository have updated release notes and have been through the quarterly review process.')
 
@@ -91,6 +94,7 @@ class Courseware::Manager
     master?
     clean?
 
+    @repository.update
     version = Courseware.increment(@repository.current(nil), true)
     review  = "qa/review/#{@coursename}"
     release = "qa/#{version}/#{@coursename}"
