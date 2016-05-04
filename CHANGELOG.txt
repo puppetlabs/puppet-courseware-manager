@@ -1,6 +1,9 @@
 # Courseware Manager
-
 ## Release Notes
+
+### v0.2.5
+* corrected printing with Prince
+* fetch tags to reduce chances of double releasing a version
 
 ### v0.2.4
 * Rebranding name change.
