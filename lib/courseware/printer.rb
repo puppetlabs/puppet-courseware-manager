@@ -129,8 +129,8 @@ class Courseware::Printer
       command << ['--footer-left', "#{@course} #{@version}", '--footer-center', '[page]']
       command << ['--footer-right', "©#{Time.now.year} Puppet", '--header-center', '[section]']
       command << ['--title', @course, File.join('static', 'index.html'), output]
-      system(*command.flatten, STDERR=>'/dev/null') # TODO: figure out what's not loading
-  #    raise 'Error generating PDF files' unless $?.success? # won't work until we figure out the ContentNotFoundError
+      system(*command.flatten)
+      raise 'Error generating PDF files' unless $?.success?
 
       if `pdftk #{output} dump_data | grep NumberOfPages`.chomp == 'NumberOfPages: 1'
         puts "#{output} is empty; aborting and cleaning up."
