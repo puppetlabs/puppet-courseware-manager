@@ -122,25 +122,19 @@ class Courseware
   end
 
   def release(subject)
-    $logger.debug "Releasing #{subject}"
     case subject
-    when :point
-      @manager.pointrelease
 
-    when :quarterly
-      @manager.quarterlyrelease
+    when :major, :minor, :point
+      $logger.debug "Creating a #{subject} release."
+      @manager.release subject
 
     when :notes
+      $logger.debug "Generating release notes."
       @manager.releasenotes
 
     else
       $logger.error "I don't know how to do that yet!"
     end
-  end
-
-  def review
-    $logger.info "Starting quarterly review."
-    @manager.review
   end
 
   def debug

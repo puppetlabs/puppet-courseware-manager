@@ -55,43 +55,20 @@ class Courseware
     File.read(filename) =~ Regexp.new(match)
   end
 
-  def self.increment(version, quarterly=false)
-    pemajor, major, minor = version.split('.')
-    if quarterly
-      "#{pemajor}.#{major.to_i + 1}.0"
-    else
-      "#{pemajor}.#{major}.#{minor.to_i + 1}"
+  def self.increment(version, type=:point)
+    major, minor, point = version.split('.')
+    case type
+    when :major
+      major.sub!(/^v/, '')  # chop off the v if needed
+      "v#{major.to_i + 1}.0.0"
+
+    when :minor
+      "#{major}.#{minor.to_i + 1}.0"
+
+    when :point
+      "#{major}.#{minor}.#{point.to_i + 1}"
+
     end
   end
 
-  def self.release_notes_table(version)
-    updated  = []
-    outdated = []
-    missing  = []
-    Dir.glob('*').select do |course|
-      next unless File.directory? course
-      next if course =~ /^_/
-
-      notes = "#{course}/Release-Notes.md"
-      case
-      when ! File.exist?(notes)
-        missing << course
-      when Courseware.grep(version, notes)
-        updated << course
-      else
-        outdated << course
-      end
-    end
-
-    n = 0
-    puts
-    puts "  Updated Release Notes    Outdated Release Notes    Missing Release Notes"
-    puts "----------------------------------------------------------------------------"
-    [ updated.size, outdated.size, missing.size ].max.times do
-      printf "  %20s    %20s    %20s\n", updated[n], outdated[n], missing[n]
-
-      n += 1
-    end
-    puts
-  end
 end
