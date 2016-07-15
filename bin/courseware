@@ -121,9 +121,6 @@ begin
     subject = [:point] if subject.empty?
     courseware.release subject.first
 
-  when :review
-    courseware.review
-
   when :shell
     courseware.debug
 

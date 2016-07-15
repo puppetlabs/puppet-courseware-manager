@@ -57,30 +57,27 @@ class Courseware
           * release [type]
               Orchestrate a courseware release. Defaults to `point`.
 
-              Puppetlabs trainers are expected to deliver the most current point release
-              while training partners also have the option for delivering the most current
-              quarterly reviewed release.
+              All instructors are expected to deliver the most current point release, except
+              in extraordinary cases. We follow Semver, as closely as it can be adapted to
+              classroom usage. Instructors can trust that updates with high potential to cause
+              classroom disruptions will never make it into a point release.
+
+                                       http://semver.org
 
               Release types:
-                  quarterly: This is a major reviewed release. We make approximately four
-                             of these releases a year, once each quarter. All courses in
-                             the repository are released simultaneously. This release is
-                             required to have at least two non-author reviewers.
+                      major: This is a major release with "breaking" changes, such as a major
+                             product update, or significant classroom workflow changes. This
+                             is not necessarily tied to product releases. Instructors should
+                             expect to spend significant time studying the new material thoroughly.
 
-                      point: Release early and release often. Any time significant changes
-                             are ready to go, make a release. This will increment the minor
-                             revision number.
+                      minor: This indicates a significant change in content. Instructors
+                             should take extra time to review updates in minor releases.
+                             The release cadence is roughly once a quarter, give or take.
+
+                      point: Release early and release often. Changes made in the regular
+                             maintenance cycle will typically fit into this category.
 
                       notes: Display release notes since last release and copy to clipboard.
-
-          * review
-              Initiate and manage the quarterly review process. Run this task and make
-              needed changes on the QA branch on GitHub using the Edit Slide button in the
-              Showoff toolbar. Be aware that the bar for changes here is rather high. Only
-              correct TINY typos and spelling or grammar mistakes or absolute blockers.
-              Anything more should be filed as a ticket and resolved in a regular release
-              cycle. The quarterly release should be polished, but should not have major
-              changes.
 
           * help
               You're looking at it.
