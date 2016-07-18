@@ -1,6 +1,10 @@
 # Courseware Manager
 ## Release Notes
 
+### v0.3.0
+* This adopts the new EDU release numbering scheme. See `courseware help`
+  for information on release types.
+
 ### v0.2.5
 * corrected printing with Prince
 * fetch tags to reduce chances of double releasing a version
