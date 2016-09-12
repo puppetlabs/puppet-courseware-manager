@@ -13,7 +13,8 @@ class Courseware::Printer
     @pdfopts << " --disallow-modify" if @config[:pdf][:protected]
 
     if @config[:pdf][:watermark]
-      @password        = Courseware.question('Enter desired password:')
+      @event_id        = Courseware.question('Enter the Event ID:')
+      @password        = Courseware.question('Enter desired password:', (@event_id[/-?(\w*)$/, 1] rescue nil))
       @watermark_style = File.join(@config[:cachedir], 'templates', 'watermark.css')
       @watermark_pdf   = File.join(@config[:cachedir], 'templates', 'watermark.pdf')
     end
@@ -125,6 +126,9 @@ class Courseware::Printer
 
     case @config[:renderer]
     when :wkhtmltopdf
+      infofile    = File.join(@config[:output], 'info.txt')
+      scratchfile = File.join(@config[:output], 'scratch.pdf')
+
       command = ['wkhtmltopdf', '-s', 'Letter', '--print-media-type', '--quiet']
       command << ['--footer-left', "#{@course} #{@version}", '--footer-center', '[page]']
       command << ['--footer-right', "©#{Time.now.year} Puppet", '--header-center', '[section]']
@@ -138,18 +142,39 @@ class Courseware::Printer
         return
       end
 
-      scratchfile = File.join(@config[:output], 'scratch.pdf')
-      command = ['pdftk', output, 'output', scratchfile]
+      # We can't add metadata in the same run. It requires dumping, modifying, and updating
+      if @event_id
+        command = ['pdftk', output, 'dump_data', 'output', infofile]
+        system(*command.flatten)
+        raise 'Error retrieving PDF info' unless $?.success?
+        info = File.read(infofile)
+        File.open(infofile, 'w+') do |file|
+          file.write("InfoBegin\n")
+          file.write("InfoKey: Subject\n")
+          file.write("InfoValue: #{@event_id}\n")
+          file.write(info)
+        end
+        command = ['pdftk', output, 'update_info', infofile, 'output', scratchfile]
+        system(*command.flatten)
+        raise 'Error updating PDF info' unless $?.success?
+      else
+        FileUtils.mv(output, scratchfile)
+      end
+
+      command = ['pdftk', scratchfile, 'output', output]
       command << ['owner_pw', @config[:pdf][:password], 'allow', 'printing', 'CopyContents']
       command << ['background', @watermark_pdf] if @config[:pdf][:watermark]
       command << ['user_pw', @password] if @password
       system(*command.flatten)
       raise 'Error watermarking PDF files' unless $?.success?
-      FileUtils.mv(scratchfile, output) if File.exists? scratchfile
+
+      FileUtils.rm(infofile)    if File.exists? infofile
+      FileUtils.rm(scratchfile) if File.exists? scratchfile
 
     when :prince
       command = ['prince', File.join('static', 'index.html')]
-      command << ['--pdf-title', @course, '--pdf-author', @config[:pdf][:author], '--pdf-subject', @config[:pdf][:subject], '--disallow-modify']
+      command << ['--pdf-title', @course, '--pdf-author', @config[:pdf][:author], '--disallow-modify']
+      command << ['--pdf-subject', @event_id] if @event_id
       command << ['--style', @watermark_style] if @config[:pdf][:watermark]
       command << ['--encrypt', '--user-password', @password] if @password
       command << ['--license-file', @config[:pdf][:license]] if (@config[:pdf][:license] and File.exists? @config[:pdf][:license])
