@@ -1,6 +1,12 @@
 # Courseware Manager
 ## Release Notes
 
+### v0.3.1
+* Properly handle x.x.1 releases again.
+* Simplify PDF passwords.
+    * uses just the last 4 of the longer event IDs
+    * writes the full event ID into the PDF subject field
+
 ### v0.3.0
 * This adopts the new EDU release numbering scheme. See `courseware help`
   for information on release types.
