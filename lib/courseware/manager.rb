@@ -30,9 +30,7 @@ class Courseware::Manager
     @repository.update
     current = @repository.current(@coursename)
     version = Courseware.increment(current)
-
-    # if the current revision is a quarterly, it won't have a name associated with it
-    tag = current.split('.').last == '0'  ? current: "#{@coursename}-#{current}"
+    tag     = "#{@coursename}-#{current}"
 
     notes = @repository.releasenotes(tag, version)
 
