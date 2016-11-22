@@ -136,7 +136,7 @@ private
   end
 
   def ensure_remote(remote, url)
-  # If we *have* the remote, but it's not correct, then  let's repair it.
+    # If we *have* the remote, but it's not correct, then  let's repair it.
     if `git config --get remote.#{remote}.url`.chomp != url and $?.success?
       if Courseware.confirm("Your '#{remote}' remote should be #{url}. May I correct this?")
         raise "Error correcting remote." unless system("git remote remove #{remote}")
@@ -145,11 +145,24 @@ private
       end
     end
 
+    # add the remote, either for the first time or because we removed it
     unless system("git config --get remote.#{remote}.url > /dev/null")
       # Add the remote if it doesn't already exist
       unless system("git remote add #{remote} #{url}")
         raise "Could not add the '#{remote}' remote."
       end
+    end
+
+    # for pedantry, validate the refspec too
+    unless `git config --get remote.#{remote}.fetch`.chomp == "+refs/heads/*:refs/remotes/#{remote}/*"
+      if Courseware.confirm("Your '#{remote}' remote has an invalid refspec. May I correct this?")
+        unless system("git config remote.#{remote}.fetch '+refs/heads/*:refs/remotes/#{remote}/*'")
+          raise "Could not repair the '#{remote}' refspec."
+        end
+      else
+        raise "Please configure your '#{remote}' remote before proceeding."
+      end
+
     end
   end
 
