@@ -107,15 +107,7 @@ class Courseware::Repository
   end
 
   def current(prefix)
-    [point_release(prefix), quarterly_release].max_by { |tag| version(tag) }
-  end
-
-  def point_release(prefix)
     tags(prefix).first.gsub(/^#{prefix}-/, '')
-  end
-
-  def quarterly_release
-    tags('v').first
   end
 
 private
