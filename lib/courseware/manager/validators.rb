@@ -45,6 +45,13 @@ class Courseware::Manager
     style  = File.exists?(style) ? style : 'all'
     issues = 0
 
+    unless system('mdl', '--version')
+      puts '  * Markdown linter not found: gem install mdl'
+      puts
+      @warnings += 1
+      return
+    end
+
     Dir.glob('**/*.md') do |file|
       next if File.symlink? file
       next if File.directory? file
