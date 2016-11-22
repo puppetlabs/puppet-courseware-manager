@@ -26,11 +26,8 @@ class Courseware::Manager
   def missing
     sections = @sections.dup
 
-    # This seems backwards, but we do it this way to get a case senstive match
+    # This seems backwards, but we do it this way to get a case sensitive match
     Dir.glob('**/*.md') do |file|
-      next if File.symlink? file
-      next if File.directory? file
-      next if file =~ /^_.*$|^[^\/]*$/
       sections.delete(file)
     end
     return if sections.empty?
