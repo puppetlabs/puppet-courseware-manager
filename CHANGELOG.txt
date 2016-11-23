@@ -1,6 +1,12 @@
 # Courseware Manager
 ## Release Notes
 
+### v0.3.2
+* Better validation for missing slides
+* Check for the mdl Markdown linter
+* More thorough git remote validation
+* Made versioning more consistent.
+
 ### v0.3.1
 * Properly handle x.x.1 releases again.
 * Simplify PDF passwords.
