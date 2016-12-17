@@ -43,6 +43,28 @@ class Courseware
     puts '################################################################################'
   end
 
+  def self.choose(message, options, default = nil)
+    body  = ""
+    options.each_with_index { |item, index| body << "\n[#{index}] #{item}" }
+    dialog(message, body)
+
+    ans = nil
+    loop do
+      if default
+        print "Choose an option by typing its number [#{default}]: "
+        ans = STDIN.gets.strip
+        ans = (ans == "") ? default : Integer(ans) rescue nil
+      else
+        print "Choose an option by typing its number: "
+        ans = Integer(STDIN.gets.strip) rescue nil
+      end
+
+      break if (0...options.size).include? ans
+    end
+
+    ans
+  end
+
   def self.get_component(initial)
     puts 'The component ID for this course can be found at:'
     puts ' * https://tickets.puppetlabs.com/browse/COURSES/?selectedTab=com.atlassian.jira.jira-projects-plugin:components-panel'

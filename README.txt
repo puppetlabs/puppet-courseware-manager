@@ -76,6 +76,16 @@ DESCRIPTION
 
               notes: Display release notes since last release and copy to clipboard.
 
+  * compose [comma,separated,list,of,tags]
+      Generates a variant of the complete course, using tags defined in `showoff.json`.
+      The practical effect of this action is to generate a new presentation `.json` file,
+      which can be displayed directly by passing the `-f` flag to Showoff, or by choosing
+      a variant in the classroom `rake present` task.
+
+  * package [variant.json]
+      Package up a standalone form of a given variant of the presentation. You can pass
+      in a `variant.json` file, or choose from a menu. Tarballs will be saved into the
+      `build` directory and you can optionally retain the full working directory.
 
   * help
       You're looking at it.
