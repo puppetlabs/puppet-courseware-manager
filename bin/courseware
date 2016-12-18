@@ -121,6 +121,10 @@ begin
     subject = [:point] if subject.empty?
     courseware.release subject.first
 
+  when :wordcount
+    subject = [:handouts, :exercises, :solutions] if subject.empty?
+    courseware.wordcount subject
+
   when :shell
     courseware.debug
 

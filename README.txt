@@ -76,6 +76,13 @@ DESCRIPTION
 
               notes: Display release notes since last release and copy to clipboard.
 
+    * wordcount [type]
+        Display a simple wordcount of one or more content types.
+
+        Arguments (optional):
+           handouts: Counts words in the student handout guide
+          exercises: Counts words in the lab exercise manual
+          solutions: Counts words in the solution guide
 
   * help
       You're looking at it.
