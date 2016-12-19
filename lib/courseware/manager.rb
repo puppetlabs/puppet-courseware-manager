@@ -24,9 +24,9 @@ class Courseware::Manager
   end
 
   def releasenotes
-    courselevel?
-    master?
-    clean?
+    courselevel!
+    master!
+    clean!
 
     @repository.update
     current = @repository.current(@coursename)
@@ -48,9 +48,9 @@ class Courseware::Manager
   end
 
   def release(type)
-    courselevel?
-    master?
-    clean?
+    courselevel!
+    master!
+    clean!
 
     @repository.update
     version = Courseware.increment(@repository.current(@coursename), type)
@@ -89,19 +89,19 @@ class Courseware::Manager
   end
 
 private
-  def toplevel?
+  def toplevel!
     raise 'This task must be run from the repository root.' unless @repository.toplevel?
   end
 
-  def courselevel?
+  def courselevel!
     raise 'This task must be run from within a course directory' unless @repository.courselevel?
   end
 
-  def master?
+  def master!
     raise 'You should release from the master branch' unless @repository.on_branch? 'master'
   end
 
-  def clean?
+  def clean!
     raise 'Your working directory has local modifications' unless @repository.clean?
   end
 

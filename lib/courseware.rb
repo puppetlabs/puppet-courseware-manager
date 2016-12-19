@@ -1,5 +1,6 @@
 class Courseware
   require 'courseware/cache'
+  require 'courseware/composer'
   require 'courseware/generator'
   require 'courseware/manager'
   require 'courseware/printer'
@@ -11,6 +12,7 @@ class Courseware
     @configfile = configfile
     @cache      = Courseware::Cache.new(config)
     @generator  = Courseware::Generator.new(config)
+    @composer   = Courseware::Composer.new(config)
 
     if Courseware::Repository.repository?
       @repository = Courseware::Repository.new(config)
@@ -139,6 +141,14 @@ class Courseware
     else
       $logger.error "I don't know how to do that yet!"
     end
+  end
+
+  def compose(subject)
+    @composer.build(subject)
+  end
+
+  def package(subject)
+    @composer.package(subject)
   end
 
   def debug
