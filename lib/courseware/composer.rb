@@ -23,7 +23,11 @@ class Courseware::Composer
       key = "tag:#{tag}"
       @showoff['sections'].each do |section|
         raise 'All sections must be represented as Hashes to customize.' unless section.is_a? Hash
-        section['include'] = section[key] if section.include? key
+
+        if section.include? key
+          raise "A section in showoff.json refers to #{section[key]}, which does not exist." unless File.exist? section[key]
+          section['include'] = section[key]
+        end
       end
     end
 
@@ -44,13 +48,15 @@ class Courseware::Composer
 
   def package(subject)
     courselevel!
-#    on_release!
+    on_release!
     pristine!
 
     subject ||= choose_variant
     subject   = subject.to_s
+    content   = JSON.parse(File.read(subject))
     variant   = File.basename(subject, '.json')
     current   = @repository.current(@coursename)
+
 
     if variant == 'showoff'
       variant = @prefix
@@ -63,7 +69,7 @@ class Courseware::Composer
     FileUtils.mkdir_p "build/#{variant}"
     FileUtils.cp subject, "build/#{variant}/showoff.json"
 
-    @showoff['sections'].each do |section|
+    content['sections'].each do |section|
       path  = section['include']
       next if path.nil?
 
@@ -86,6 +92,7 @@ class Courseware::Composer
     # duplicate from cwd to build/variant everything not already copied
     Dir.glob('*').each do |thing|
       next if thing == 'build'
+      next if File.extname(thing) == '.json'
       next if File.exist? "build/#{variant}/#{thing}"
       FileUtils.ln_s "../../#{thing}", "build/#{variant}/#{thing}"
     end
