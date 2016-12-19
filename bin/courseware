@@ -122,6 +122,11 @@ begin
     subject = [:point] if subject.empty?
     courseware.release subject.first
 
+
+  when :wordcount
+    subject = [:handouts, :exercises, :solutions] if subject.empty?
+    courseware.wordcount subject
+
   when :compose
     subject.collect! {|tags| tags.to_s.split ',' }.flatten
     courseware.compose subject.first

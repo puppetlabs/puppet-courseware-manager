@@ -63,6 +63,10 @@ class Courseware
     end
   end
 
+  def wordcount(subject)
+    @manager.wordcount(subject)
+  end
+
   def generate(subject)
     $logger.debug "Generating #{subject}"
     if subject.first == :skeleton

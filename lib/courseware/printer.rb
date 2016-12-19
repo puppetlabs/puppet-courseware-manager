@@ -23,6 +23,7 @@ class Courseware::Printer
 
     if block_given?
       yield self
+      FileUtils.rm_rf('static')
     end
   end
 
@@ -97,6 +98,25 @@ class Courseware::Printer
     return true
   end
 
+  # clean out the static dir and build the source html
+  def generate_html(subject)
+    case subject
+    when :handouts, :print
+      subject = 'print'
+    when :exercises, :solutions
+      subject = "supplemental #{subject}"
+    else
+      raise "I don't know how to generate HTML of #{subject}."
+    end
+
+    FileUtils.rm_rf('static')
+    system("showoff static #{subject}")
+    if File.exists? 'cobrand.png'
+      FileUtils.mkdir(File.join('static', 'image'))
+      FileUtils.cp('cobrand.png', File.join('static', 'image', 'cobrand.png'))
+    end
+  end
+
   def generate_pdf(subject)
     # TODO screen printing
     # @pdfopts << " #{SCREENHACK}"
@@ -115,13 +135,7 @@ class Courseware::Printer
       raise "I don't know how to generate a PDF of #{subject}."
     end
 
-    # clean out the static dir and build the source html
-    FileUtils.rm_rf('static')
-    system("showoff static #{subject}")
-    if File.exists? 'cobrand.png'
-      FileUtils.mkdir(File.join('static', 'image'))
-      FileUtils.cp('cobrand.png', File.join('static', 'image', 'cobrand.png'))
-    end
+    generate_html(subject)
     FileUtils.mkdir(@config[:output]) unless File.directory?(@config[:output])
 
     case @config[:renderer]

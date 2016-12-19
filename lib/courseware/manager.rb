@@ -1,6 +1,7 @@
 require 'courseware/printer'
 require 'courseware/repository'
 require 'io/console'
+require 'nokogiri'
 
 class Courseware::Manager
   require 'courseware/manager/validators'
@@ -70,6 +71,23 @@ class Courseware::Manager
     puts "Release shipped. Please upload PDF files to printer and break out the bubbly."
   end
 
+  def wordcount(subject)
+    $logger.debug "Counting words for #{subject}"
+    opts = print_opts(@repository.current(prefix))
+    puts "Words longer than a single character:"
+    Courseware::Printer.new(@config, opts) do |printer|
+      subject.each do |item|
+        printer.generate_html(item)
+        doc   = Nokogiri::HTML(File.read('static/index.html'))
+        count = doc.css('body').text.split.select {|w| w.size > 1 }.count
+
+        puts "  * #{item}: #{count}"
+
+        FileUtils.rm_rf('static')
+      end
+    end
+  end
+
 private
   def toplevel!
     raise 'This task must be run from the repository root.' unless @repository.toplevel?
@@ -92,17 +110,19 @@ private
   end
 
   def build_pdfs(version)
-    opts = {
+    @generator.styles(@coursename, version)
+    Courseware::Printer.new(@config, print_opts(version)) do |printer|
+      printer.print
+    end
+    system("open #{@config[:output]} >/dev/null 2>&1")
+  end
+
+  def print_opts(version)
+    {
       :course  => @coursename,
       :prefix  => @prefix,
       :version => version,
     }
-
-    @generator.styles(@coursename, version)
-    Courseware::Printer.new(@config, opts) do |printer|
-      printer.print
-    end
-    system("open #{@config[:output]} >/dev/null 2>&1")
   end
 
 end

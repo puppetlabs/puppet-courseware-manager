@@ -79,6 +79,15 @@ class Courseware
 
                       notes: Display release notes since last release and copy to clipboard.
 
+
+          * wordcount [type]
+              Display a simple wordcount of one or more content types.
+
+              Arguments (optional):
+                 handouts: Counts words in the student handout guide
+                exercises: Counts words in the lab exercise manual
+                solutions: Counts words in the solution guide
+
           * compose [comma,separated,list,of,tags]
               Generates a variant of the complete course, using tags defined in `showoff.json`.
               The practical effect of this action is to generate a new presentation `.json` file,
