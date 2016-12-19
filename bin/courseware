@@ -104,6 +104,7 @@ begin
   when :print
     subject = [:handouts, :exercises, :solutions] if subject.empty?
     courseware.print subject
+
   when :watermark
     subject = [:handouts, :exercises, :solutions] if subject.empty?
     courseware.options(:section => :pdf, :watermark => true)
@@ -120,6 +121,13 @@ begin
   when :release
     subject = [:point] if subject.empty?
     courseware.release subject.first
+
+  when :compose
+    subject.collect! {|tags| tags.to_s.split ',' }.flatten
+    courseware.compose subject.first
+
+  when :package
+    courseware.package subject.first
 
   when :shell
     courseware.debug

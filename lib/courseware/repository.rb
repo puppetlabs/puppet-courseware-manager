@@ -79,6 +79,11 @@ class Courseware::Repository
     system('git diff-index --quiet HEAD')
   end
 
+  # clean working tree and no untracked files
+  def pristine?
+    clean? and `git ls-files --other --directory --exclude-standard`.empty?
+  end
+
   def branch_exists?(branch)
     `git branch --list '#{branch}'` != ''
   end
@@ -89,6 +94,13 @@ class Courseware::Repository
 
   def courselevel?
     File.expand_path("#{Dir.pwd}/..") == `git rev-parse --show-toplevel`.chomp
+  end
+
+  def outstanding_commits(prefix, verbose=false)
+    last = current(prefix)
+    commits = `git log --no-merges --oneline #{prefix}-#{last}..HEAD -- .`.each_line.map {|line| line.chomp }
+
+    verbose ? commits : commits.count
   end
 
   def releasenotes(last, version)
