@@ -79,7 +79,6 @@ class Courseware
 
                       notes: Display release notes since last release and copy to clipboard.
 
-
           * wordcount [type]
               Display a simple wordcount of one or more content types.
 

@@ -76,14 +76,13 @@ DESCRIPTION
 
               notes: Display release notes since last release and copy to clipboard.
 
+  * wordcount [type]
+      Display a simple wordcount of one or more content types.
 
-    * wordcount [type]
-        Display a simple wordcount of one or more content types.
-
-        Arguments (optional):
-           handouts: Counts words in the student handout guide
-          exercises: Counts words in the lab exercise manual
-          solutions: Counts words in the solution guide
+      Arguments (optional):
+         handouts: Counts words in the student handout guide
+        exercises: Counts words in the lab exercise manual
+        solutions: Counts words in the solution guide
 
   * compose [comma,separated,list,of,tags]
       Generates a variant of the complete course, using tags defined in `showoff.json`.
@@ -95,7 +94,6 @@ DESCRIPTION
       Package up a standalone form of a given variant of the presentation. You can pass
       in a `variant.json` file, or choose from a menu. Tarballs will be saved into the
       `build` directory and you can optionally retain the full working directory.
-
 
   * help
       You're looking at it.
