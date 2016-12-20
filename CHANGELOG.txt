@@ -1,6 +1,18 @@
 # Courseware Manager
 ## Release Notes
 
+### v0.4.0
+* Can now generate custom courses via the `compose` action
+    * requires Showoff >= v0.15.2
+    * requires specific as-yet undocumented form of `showoff.json`
+    * `rake present` allows instructor to choose variant
+* Can now package standalone presentations as a tarball
+    * Defaults to main presentation
+    * Can package any variant
+    * Includes all assets other than certificates
+* Adds wordcount functionality
+    * Converts presentation to plain text and counts words > 1 character
+
 ### v0.3.2
 * Better validation for missing slides
 * Check for the mdl Markdown linter
