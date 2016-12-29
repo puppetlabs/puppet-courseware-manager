@@ -65,6 +65,28 @@ class Courseware
     ans
   end
 
+  def self.choose_variant
+    variants = Dir.glob('*.json')
+    maxlen   = variants.max { |x,y| x.size <=> y.size }.size - 4 # accomodate for the extension we're stripping
+
+    return 'showoff.json' if variants == ['showoff.json']
+
+    # Ensures that the default `showoff.json` is listed first
+    variants.unshift "showoff.json"
+    variants.uniq!
+
+    options = variants.map do |variant|
+      data = JSON.parse(File.read(variant))
+      name = (variant == 'showoff.json') ? 'default' : File.basename(variant, '.json')
+      desc = data['description']
+
+      "%#{maxlen}s: %s" % [name, desc]
+    end
+
+    idx = Courseware.choose("This course has several variants available:", options, 0)
+    variants[idx]
+  end
+
   def self.get_component(initial)
     puts 'The component ID for this course can be found at:'
     puts ' * https://tickets.puppetlabs.com/browse/COURSES/?selectedTab=com.atlassian.jira.jira-projects-plugin:components-panel'

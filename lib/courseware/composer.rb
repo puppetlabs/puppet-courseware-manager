@@ -51,12 +51,11 @@ class Courseware::Composer
     on_release!
     pristine!
 
-    subject ||= choose_variant
+    subject ||= Courseware.choose_variant
     subject   = subject.to_s
     content   = JSON.parse(File.read(subject))
     variant   = File.basename(subject, '.json')
     current   = @repository.current(@coursename)
-
 
     if variant == 'showoff'
       variant = @prefix
@@ -108,36 +107,14 @@ private
   def display_tags
     courselevel!
 
+    raise "This course has no tags to choose from." unless @showoff['tags']
+
     puts
     puts 'Available tags:'
     @showoff['tags'].each do |tag, desc|
       printf " * %-10s: %s\n", tag, desc
     end
     puts
-  end
-
-  def choose_variant
-    courselevel!
-
-    variants = Dir.glob('*.json')
-    maxlen   = variants.max { |x,y| x.size <=> y.size }.size - 4 # accomodate for the extension we're stripping
-
-    return 'showoff.json' if variants == ['showoff.json']
-
-    # Ensures that the default `showoff.json` is listed first
-    variants.unshift "showoff.json"
-    variants.uniq!
-
-    options = variants.map do |variant|
-      data = JSON.parse(File.read(variant))
-      name = (variant == 'showoff.json') ? 'default' : File.basename(variant, '.json')
-      desc = data['description']
-
-      "%#{maxlen}s: %s" % [name, desc]
-    end
-
-    idx = Courseware.choose("This course has several variants available:", options, 0)
-    variants[idx]
   end
 
   def courselevel!

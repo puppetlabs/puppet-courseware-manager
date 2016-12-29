@@ -6,6 +6,9 @@ class Courseware::Printer
     @course  = opts[:course]  or raise 'Course is a required option'
     @prefix  = opts[:prefix]  or raise 'Prefix is a required option'
     @version = opts[:version] or raise 'Version is a required option'
+    @varfile = opts[:variant] or raise 'Variant is a required option'
+
+    @variant = File.basename(@varfile, '.json') unless @varfile == 'showoff.json'
 
     raise unless can_print?
 
@@ -109,11 +112,21 @@ class Courseware::Printer
       raise "I don't know how to generate HTML of #{subject}."
     end
 
-    FileUtils.rm_rf('static')
-    system("showoff static #{subject}")
-    if File.exists? 'cobrand.png'
-      FileUtils.mkdir(File.join('static', 'image'))
-      FileUtils.cp('cobrand.png', File.join('static', 'image', 'cobrand.png'))
+    begin
+      # Until showoff static knows about -f, we have to schlup around files
+      if @variant
+        FileUtils.mv 'showoff.json', 'showoff.json.tmp'
+        FileUtils.cp @varfile, 'showoff.json'
+      end
+
+      FileUtils.rm_rf('static')
+      system("showoff static #{subject}")
+      if File.exists? 'cobrand.png'
+        FileUtils.mkdir(File.join('static', 'image'))
+        FileUtils.cp('cobrand.png', File.join('static', 'image', 'cobrand.png'))
+      end
+    ensure
+      FileUtils.mv('showoff.json.tmp', 'showoff.json') if File.exist? 'showoff.json.tmp'
     end
   end
 
@@ -124,13 +137,13 @@ class Courseware::Printer
 
     # Build the filename for the output PDF. This is ugly.
     output = File.join(@config[:output], "#{@prefix}-")
+    output << "#{@variant}-" if @variant
     output << 'w-' if @config[:pdf][:watermark]
     case subject
     when :print
       output << "#{@version}.pdf"
     when :exercises, :solutions
       output << "#{@version}-#{subject}.pdf"
-      subject = "supplemental #{subject}"
     else
       raise "I don't know how to generate a PDF of #{subject}."
     end

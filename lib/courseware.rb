@@ -39,10 +39,13 @@ class Courseware
 
   def print(subject)
     $logger.debug "Printing #{subject}"
+
+    #TODO: This should not be duplicated!
     opts = {
       :course  => @manager.coursename,
       :prefix  => @manager.prefix,
       :version => @repository.current(@manager.prefix),
+      :variant => Courseware.choose_variant,
     }
     Courseware::Printer.new(@config, opts) do |printer|
       subject.each do |item|
