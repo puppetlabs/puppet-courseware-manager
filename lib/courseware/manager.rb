@@ -122,6 +122,7 @@ private
       :course  => @coursename,
       :prefix  => @prefix,
       :version => version,
+      :variant => Courseware.choose_variant,
     }
   end
 
