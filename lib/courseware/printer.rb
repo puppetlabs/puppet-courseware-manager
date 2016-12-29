@@ -130,7 +130,6 @@ class Courseware::Printer
       output << "#{@version}.pdf"
     when :exercises, :solutions
       output << "#{@version}-#{subject}.pdf"
-      subject = "supplemental #{subject}"
     else
       raise "I don't know how to generate a PDF of #{subject}."
     end
