@@ -21,6 +21,7 @@ class Courseware
                  handouts: Generate handout notes
                 exercises: Generate the lab exercise manual
                 solutions: Generate the solution guide
+                    guide: Generate the instructor guide
 
           * watermark
               Render watermarked PDF files. Accepts same arguements as the `print` verb.

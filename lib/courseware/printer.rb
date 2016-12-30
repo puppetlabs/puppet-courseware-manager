@@ -54,6 +54,12 @@ class Courseware::Printer
     generate_pdf(:solutions)
   end
 
+  def guide
+    $logger.info "Generating instructor guide pdf for #{@course} #{@version}..."
+
+    generate_pdf(:guide)
+  end
+
   # Ensure that the printing toolchain is in place.
   def can_print?
     case @config[:renderer]
@@ -108,6 +114,8 @@ class Courseware::Printer
       subject = 'print'
     when :exercises, :solutions
       subject = "supplemental #{subject}"
+    when :guide
+      subject = 'print guide'
     else
       raise "I don't know how to generate HTML of #{subject}."
     end
@@ -142,7 +150,7 @@ class Courseware::Printer
     case subject
     when :print
       output << "#{@version}.pdf"
-    when :exercises, :solutions
+    when :exercises, :solutions, :guide
       output << "#{@version}-#{subject}.pdf"
     else
       raise "I don't know how to generate a PDF of #{subject}."

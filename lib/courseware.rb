@@ -59,6 +59,9 @@ class Courseware
         when :solutions
           printer.solutions
 
+        when :guide
+          printer.guide
+
         else
           $logger.error "The #{item} document type does not exist."
         end
