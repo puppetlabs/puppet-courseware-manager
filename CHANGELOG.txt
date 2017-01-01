@@ -1,6 +1,13 @@
 # Courseware Manager
 ## Release Notes
 
+### v0.5.0 (Public release)
+* First public release
+    * Not for general consumption, merely for ease of distribution.
+* Enable printing of new style instructor guide.
+* Enable printing of course variants
+* Bugfix: corrected printing regression introduced in v0.4.0
+
 ### v0.4.0
 * Can now generate custom courses via the `compose` action
     * requires Showoff >= v0.15.2
