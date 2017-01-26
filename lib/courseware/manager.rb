@@ -19,7 +19,18 @@ class Courseware::Manager
       showoff     = JSON.parse(File.read(@config[:presfile]))
       @coursename = showoff['name']
       @prefix     = showoff['name'].gsub(' ', '_')
-      @sections   = showoff['sections']
+      @sections   = showoff['sections'].map do |entry|
+        next entry if entry.is_a? String
+        next nil unless entry.is_a? Hash
+        next nil unless entry.include? 'include'
+
+        file = entry['include']
+        path = File.dirname(file)
+        data = JSON.parse(File.read(file))
+
+        data.map { |source| "#{path}/#{source}" }
+      end.flatten
+
     end
   end
 
