@@ -1,6 +1,12 @@
 class Courseware::Manager
 
   def obsolete
+    # We need to get all slides from all variants to determine what's obsolete.
+    allsections = Dir.glob('*.json').collect do |variant|
+      coursename, prefix, sections = Courseware.parse_showoff(variant)
+      sections
+    end.flatten.uniq
+
     puts "Obsolete images:"
     Dir.glob('**/_images/*') do |file|
       next if File.symlink? file
@@ -16,7 +22,7 @@ class Courseware::Manager
       next if File.symlink? file
       next if File.directory? file
       next if file =~ /^_.*$|^[^\/]*$/
-      next if @sections.include? file
+      next if allsections.include? file
 
       puts "  * #{file}"
       @warnings += 1

@@ -49,6 +49,8 @@ class Courseware
                   obsolete: Lists all unreferenced images and slides. This reference checks
                             all slides and all CSS stylesheets. Case sensitive.
 
+                            Note: This validator will validate all course variants.
+
                    missing: Lists all slides that are missing. Note that this does not check
                             for missing image files yet. Case sensitive.
 
