@@ -87,6 +87,26 @@ class Courseware
     variants[idx]
   end
 
+  # TODO: I'm not happy with this being here, but I don't see a better place for it just now
+  def self.parse_showoff(filename)
+    showoff    = JSON.parse(File.read(filename))
+    coursename = showoff['name']
+    prefix     = showoff['name'].gsub(' ', '_')
+    sections   = showoff['sections'].map do |entry|
+      next entry if entry.is_a? String
+      next nil unless entry.is_a? Hash
+      next nil unless entry.include? 'include'
+
+      file = entry['include']
+      path = File.dirname(file)
+      data = JSON.parse(File.read(file))
+
+      data.map { |source| "#{path}/#{source}" }
+    end.flatten.compact
+
+    return coursename, prefix, sections
+  end
+
   def self.get_component(initial)
     puts 'The component ID for this course can be found at:'
     puts ' * https://tickets.puppetlabs.com/browse/COURSES/?selectedTab=com.atlassian.jira.jira-projects-plugin:components-panel'

@@ -27,6 +27,10 @@ optparse = OptionParser.new { |opts|
         cmdlineopts[:renderer] = opt.to_sym
     end
 
+    opts.on("-f", "--file FILE", "Presentation file. Defaults to 'showoff.json'.") do |opt|
+        cmdlineopts[:presfile] = opt
+    end
+
     opts.on("-d", "--debug", "Display debugging messages") do
         cmdlineopts[:debug] = true
     end
@@ -56,7 +60,6 @@ config.merge!(cmdlineopts)
 config[:templates]            ||= 'git@github.com:puppetlabs/courseware-templates.git'
 config[:cachedir]             ||= '~/.courseware'
 config[:stylesheet]           ||= 'courseware.css'
-config[:presfile]             ||= 'showoff.json'
 config[:renderer]             ||= :wkhtmltopdf
 config[:output]               ||= 'pdf'
 config[:collector]            ||= 'http://puppetlabs.com/training/issues?s='
@@ -71,6 +74,14 @@ config[:pdf][:password]       ||= 'default'
 config[:pdf][:protected]      ||= true
 config[:pdf][:watermark]      ||= false
 config[:pdf][:license]        ||= nil
+
+# Validating obsolete slides is special because we have to load all variants;
+# nonetheless, we do need *something* valid there, so drop in a dummy value.
+if ARGV == ['validate', 'obsolete']
+  config[:presfile] ||= 'showoff.json'
+else
+  config[:presfile] ||= Courseware.choose_variant
+end
 
 # expand out all path shortcuts in one single place.
 [ :cachedir ].each do |path|

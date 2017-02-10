@@ -6,8 +6,8 @@ class Courseware::Printer
     @course  = opts[:course]  or raise 'Course is a required option'
     @prefix  = opts[:prefix]  or raise 'Prefix is a required option'
     @version = opts[:version] or raise 'Version is a required option'
-    @varfile = opts[:variant] or raise 'Variant is a required option'
 
+    @varfile = config[:presfile] or raise 'Presentation file is not set properly!'
     @variant = File.basename(@varfile, '.json') unless @varfile == 'showoff.json'
 
     raise unless can_print?
@@ -123,7 +123,7 @@ class Courseware::Printer
     begin
       # Until showoff static knows about -f, we have to schlup around files
       if @variant
-        FileUtils.mv 'showoff.json', 'showoff.json.tmp'
+        FileUtils.mv 'showoff.json', '.showoff.json.tmp'
         FileUtils.cp @varfile, 'showoff.json'
       end
 
@@ -134,7 +134,7 @@ class Courseware::Printer
         FileUtils.cp('cobrand.png', File.join('static', 'image', 'cobrand.png'))
       end
     ensure
-      FileUtils.mv('showoff.json.tmp', 'showoff.json') if File.exist? 'showoff.json.tmp'
+      FileUtils.mv('.showoff.json.tmp', 'showoff.json') if File.exist? 'showoff.json.tmp'
     end
   end
 
