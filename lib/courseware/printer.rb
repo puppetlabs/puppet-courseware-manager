@@ -6,18 +6,19 @@ class Courseware::Printer
     @course  = opts[:course]  or raise 'Course is a required option'
     @prefix  = opts[:prefix]  or raise 'Prefix is a required option'
     @version = opts[:version] or raise 'Version is a required option'
+    raise unless can_print?
 
     @varfile = config[:presfile] or raise 'Presentation file is not set properly!'
     @variant = File.basename(@varfile, '.json') unless @varfile == 'showoff.json'
-
-    raise unless can_print?
 
     @pdfopts = "--pdf-title '#{@course}' --pdf-author '#{@config[:pdf][:author]}' --pdf-subject '#{@config[:pdf][:subject]}'"
     @pdfopts << " --disallow-modify" if @config[:pdf][:protected]
 
     if @config[:pdf][:watermark]
-      @event_id        = Courseware.question('Enter the Event ID:')
-      @password        = Courseware.question('Enter desired password:', (@event_id[/-?(\w*)$/, 1] rescue nil))
+      showoff          = Courseware.parse_showoff(@config[:presfile])
+
+      @event_id        = showoff['event_id'] || Courseware.question('Enter the Event ID:')
+      @password        = showoff['key']      || Courseware.question('Enter desired password:', (@event_id[/-?(\w*)$/, 1] rescue nil))
       @watermark_style = File.join(@config[:cachedir], 'templates', 'watermark.css')
       @watermark_pdf   = File.join(@config[:cachedir], 'templates', 'watermark.pdf')
     end
@@ -134,7 +135,7 @@ class Courseware::Printer
         FileUtils.cp('cobrand.png', File.join('static', 'image', 'cobrand.png'))
       end
     ensure
-      FileUtils.mv('.showoff.json.tmp', 'showoff.json') if File.exist? 'showoff.json.tmp'
+      FileUtils.mv('.showoff.json.tmp', 'showoff.json') if File.exist? '.showoff.json.tmp'
     end
   end
 

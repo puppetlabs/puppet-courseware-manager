@@ -15,7 +15,11 @@ class Courseware::Manager
     @warnings   = 0
     @errors     = 0
 
-    @coursename, @prefix, @sections = Courseware.parse_showoff(@config[:presfile])
+    showoff     = Courseware.parse_showoff(@config[:presfile])
+    @coursename = showoff['name']
+    @prefix     = showoff['name'].gsub(' ', '_')
+    @sections   = showoff['sections']
+    @password   = showoff['key']
   end
 
   def releasenotes
