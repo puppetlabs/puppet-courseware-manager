@@ -3,8 +3,7 @@ class Courseware::Manager
   def obsolete
     # We need to get all slides from all variants to determine what's obsolete.
     allsections = Dir.glob('*.json').collect do |variant|
-      coursename, prefix, sections = Courseware.parse_showoff(variant)
-      sections
+      Courseware.parse_showoff(variant)['sections'] rescue nil
     end.flatten.uniq
 
     puts "Obsolete images:"

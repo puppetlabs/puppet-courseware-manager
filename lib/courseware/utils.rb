@@ -90,8 +90,6 @@ class Courseware
   # TODO: I'm not happy with this being here, but I don't see a better place for it just now
   def self.parse_showoff(filename)
     showoff    = JSON.parse(File.read(filename))
-    coursename = showoff['name']
-    prefix     = showoff['name'].gsub(' ', '_')
     sections   = showoff['sections'].map do |entry|
       next entry if entry.is_a? String
       next nil unless entry.is_a? Hash
@@ -103,8 +101,9 @@ class Courseware
 
       data.map { |source| "#{path}/#{source}" }
     end.flatten.compact
+    showoff['sections'] = sections
 
-    return coursename, prefix, sections
+    return showoff
   end
 
   def self.get_component(initial)
