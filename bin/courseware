@@ -74,6 +74,8 @@ config[:pdf][:password]       ||= 'default'
 config[:pdf][:protected]      ||= true
 config[:pdf][:watermark]      ||= false
 config[:pdf][:license]        ||= nil
+config[:release]              ||= {}
+config[:release][:links]      ||= []
 
 # Validating obsolete slides is special because we have to load all variants;
 # nonetheless, we do need *something* valid there, so drop in a dummy value.

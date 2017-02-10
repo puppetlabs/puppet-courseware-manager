@@ -67,6 +67,12 @@ class Courseware::Manager
 
     @repository.commit(@config[:stylesheet], "Updating for #{@coursename} release #{version}")
     @repository.tag("#{@prefix}-#{version}", "Releasing #{@coursename} version #{version}")
+
+    # places the PDF files should be uploaded to
+    @config[:release][:links].each do |link|
+      system("open #{link}")
+    end
+
     puts "Release shipped. Please upload PDF files to printer and break out the bubbly."
   end
 
