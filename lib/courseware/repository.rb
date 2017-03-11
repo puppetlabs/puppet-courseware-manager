@@ -3,9 +3,10 @@ require 'rubygems'
 class Courseware::Repository
 
   def initialize(config)
-    raise 'This is not a courseware repository' unless Courseware::Repository.repository?
     @config = config
+    return if @config[:nocache]
 
+    raise 'This is not a courseware repository' unless Courseware::Repository.repository?
     configure_courseware
   end
 

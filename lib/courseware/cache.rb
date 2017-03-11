@@ -4,8 +4,10 @@ class Courseware::Cache
   def initialize(config)
     @config = config
 
-    clone
-    update
+    unless @config[:nocache]
+      clone
+      update
+    end
   end
 
   def clone
