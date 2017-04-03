@@ -32,7 +32,8 @@ class Courseware::Manager
     sections = @sections.dup
 
     # This seems backwards, but we do it this way to get a case sensitive match
-    Dir.glob('**/*.md') do |file|
+    # http://stackoverflow.com/questions/357754/can-i-traverse-symlinked-directories-in-ruby-with-a-glob -- Baby jesus is crying.
+    Dir.glob("**{,/*/**}/*.md") do |file|
       sections.delete(file)
     end
     return if sections.empty?

@@ -90,12 +90,20 @@ class Courseware
   # TODO: I'm not happy with this being here, but I don't see a better place for it just now
   def self.parse_showoff(filename)
     showoff    = JSON.parse(File.read(filename))
-    sections   = showoff['sections'].map do |entry|
-      next entry if entry.is_a? String
-      next nil unless entry.is_a? Hash
-      next nil unless entry.include? 'include'
+    sections   = showoff['sections'].map do |entry, section|
+      next entry if entry.is_a? String and section.nil?
 
-      file = entry['include']
+      if entry.is_a? Hash
+        file = entry['include']
+      else
+        file = section
+      end
+
+      unless file
+        puts "Malformed entry: #{entry.inspect} - #{section.inspect}"
+        next nil
+      end
+
       path = File.dirname(file)
       data = JSON.parse(File.read(file))
 
