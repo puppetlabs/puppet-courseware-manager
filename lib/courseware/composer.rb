@@ -53,7 +53,7 @@ class Courseware::Composer
 
     subject ||= Courseware.choose_variant
     subject   = subject.to_s
-    content   = JSON.parse(File.read(subject))
+    content   = Courseware.parse_showoff(subject)
     variant   = File.basename(subject, '.json')
     current   = @repository.current(@coursename)
 
@@ -69,12 +69,17 @@ class Courseware::Composer
     FileUtils.cp subject, "build/#{variant}/showoff.json"
 
     content['sections'].each do |section|
-      path  = section['include']
-      next if path.nil?
+      if section.is_a? Hash
+        path = section['include']
+      else
+        path = section
+      end
 
       dir   = File.dirname path
       FileUtils.mkdir_p "build/#{variant}/#{dir}"
       FileUtils.cp path, "build/#{variant}/#{path}"
+
+      next unless section.is_a? Hash
 
       files = JSON.parse(File.read(path))
       files.each do |file|
