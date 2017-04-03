@@ -19,8 +19,8 @@ class Courseware
       @manager    = Courseware::Manager.new(config, @repository)
     else
       require 'courseware/dummy'
-      @repository = Courseware::Dummy.new
-      @manager    = Courseware::Dummy.new
+      @repository = Courseware::Dummy.new(config)
+      @manager    = Courseware::Dummy.new(config)
       $logger.debug "Running outside a valid git repository."
     end
   end

@@ -31,6 +31,14 @@ optparse = OptionParser.new { |opts|
         cmdlineopts[:presfile] = opt
     end
 
+    opts.on("-o", "--output DIRECTORY", "Output directory to place generated files in.") do |opt|
+        cmdlineopts[:output] = opt
+    end
+
+    opts.on("-n", "--no-cache", "Don't cache template content") do
+        cmdlineopts[:nocache] = true
+    end
+
     opts.on("-d", "--debug", "Display debugging messages") do
         cmdlineopts[:debug] = true
     end
@@ -58,6 +66,7 @@ config ||= YAML.load_file(File.expand_path('../courseware.yaml')) rescue {}
 config.merge!(cmdlineopts)
 # finally, apply defaults to any unset options
 config[:templates]            ||= 'git@github.com:puppetlabs/courseware-templates.git'
+config[:nocache]              ||= false
 config[:cachedir]             ||= '~/.courseware'
 config[:stylesheet]           ||= 'courseware.css'
 config[:renderer]             ||= :wkhtmltopdf
