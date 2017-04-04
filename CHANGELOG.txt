@@ -1,6 +1,11 @@
 # Courseware Manager
 ## Release Notes
 
+### v0.5.2
+* Add support for Showoff named sections, making it possible to validate new courses.
+* Add support for packaging more showoff formats.
+* Add support for running headless, so we can generate PDFs in the classroom.
+
 ### v0.5.1
 * Support modular presentations
 * Allow watermarked PDF files via metadata in showoff
