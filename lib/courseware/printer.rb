@@ -15,12 +15,18 @@ class Courseware::Printer
     @pdfopts << " --disallow-modify" if @config[:pdf][:protected]
 
     if @config[:pdf][:watermark]
-      showoff          = Courseware.parse_showoff(@config[:presfile])
+      showoff   = Courseware.parse_showoff(@config[:presfile])
 
-      @event_id        = showoff['event_id'] || Courseware.question('Enter the Event ID:')
-      @password        = showoff['key']      || Courseware.question('Enter desired password:', (@event_id[/-?(\w*)$/, 1] rescue nil))
-      @watermark_style = File.join(@config[:cachedir], 'templates', 'watermark.css')
-      @watermark_pdf   = File.join(@config[:cachedir], 'templates', 'watermark.pdf')
+      @event_id = showoff['event_id'] || Courseware.question('Enter the Event ID:')
+      @password = showoff['key']      || Courseware.question('Enter desired password:', (@event_id[/-?(\w*)$/, 1] rescue nil))
+
+      if @config[:nocache]
+        @watermark_style = File.join('_support', 'watermark.css')
+        @watermark_pdf   = File.join('_support', 'watermark.pdf')
+      else
+        @watermark_style = File.join(@config[:cachedir], 'templates', 'watermark.css')
+        @watermark_pdf   = File.join(@config[:cachedir], 'templates', 'watermark.pdf')
+      end
     end
 
     FileUtils.mkdir(config[:output]) unless File.directory?(config[:output])
