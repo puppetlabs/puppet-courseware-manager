@@ -1,6 +1,9 @@
 # Courseware Manager
 ## Release Notes
 
+### v0.5.3
+* Use the in-preso watermark when cache is disabled.
+
 ### v0.5.2
 * Add support for Showoff named sections, making it possible to validate new courses.
 * Add support for packaging more showoff formats.
