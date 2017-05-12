@@ -2,21 +2,37 @@ require 'word_wrap'
 require 'word_wrap/core_ext'
 
 class Courseware
-  def self.question(message, default=nil)
-    if default
-      print "#{message} [#{default}] "
-    else
-      print "#{message} "
+  def self.question(message, default=nil, required=false)
+    unless STDIN.tty?
+      raise "The question '#{message}' requires an answer and cannot be run non-interactively." if required
+      return default
     end
 
-    answer = STDIN.gets.strip
+    loop do
+      if default
+        print "#{message} [#{default}] "
+      else
+        print "#{message} "
+      end
 
-    return answer.empty? ? default : answer
+      answer = STDIN.gets.strip
+      next if required and answer.empty?
+
+      return answer.empty? ? default : answer
+    end
   end
 
-  def self.confirm(message)
-    print "#{message} [Y/n]: "
-    [ 'y', 'yes', '' ].include? STDIN.gets.strip.downcase
+  def self.confirm(message, default=true)
+    return default unless STDIN.tty?
+
+    if default
+      print "#{message} [Y/n]: "
+      answers = [ 'y', 'yes', '' ]
+    else
+      print "#{message} [N/y]: "
+      answers = [ 'y', 'yes' ]
+    end
+    answers.include? STDIN.gets.strip.downcase
   end
 
   def self.bailout?(message)
