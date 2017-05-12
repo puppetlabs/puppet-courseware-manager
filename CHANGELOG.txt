@@ -1,6 +1,9 @@
 # Courseware Manager
 ## Release Notes
 
+### v0.5.4
+* When running non-interactively and a default is provided, don't prompt for input.
+
 ### v0.5.3
 * Use the in-preso watermark when cache is disabled.
 
