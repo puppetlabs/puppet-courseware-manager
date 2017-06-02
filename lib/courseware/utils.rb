@@ -37,7 +37,7 @@ class Courseware
 
   def self.bailout?(message)
     print "#{message} Continue? [Y/n]: "
-    unless [ 'y', 'yes', '' ].include? STDIN.gets.strip.downcase
+    unless [ 'y', 'yes' ].include? STDIN.gets.strip.downcase
       if block_given?
         yield
       end
