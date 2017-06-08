@@ -35,8 +35,8 @@ class Courseware
     answers.include? STDIN.gets.strip.downcase
   end
 
-  def self.bailout?(message, default=false)
-    if default
+  def self.bailout?(message, required=false)
+    if required
       print "#{message} Continue? ['y/N']: " : 
       options = ['y', 'yes']
     else
