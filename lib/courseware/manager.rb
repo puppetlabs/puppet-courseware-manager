@@ -61,7 +61,7 @@ class Courseware::Manager
     Courseware.bailout?('Abort now if the commit message displayed is not what you expected.')
     build_pdfs(version)
     point_of_no_return
-    Courseware.bailout?('Please inspect the generated PDF files and abort if corrections must be made.') do
+    Courseware.bailout?('Please inspect the generated PDF files and abort if corrections must be made.', true) do
       @repository.discard(@config[:stylesheet])
     end
 
