@@ -55,7 +55,17 @@ class Courseware::Manager
     version = Courseware.increment(@repository.current(@coursename), type)
     Courseware.bailout?("Building a release for #{@coursename} version #{version}.")
 
-    raise "Release notes not updated for #{version}" unless Courseware.grep(version, 'Release-Notes.md')
+    rfiles = Dir.glob("Release-Notes*")
+    rnotes = false
+
+    for rfile in rfiles
+      if Courseware.grep(version, rfile)
+        rnotes = true
+        break
+      end
+    end
+
+    raise "Release notes not updated for #{version}" unless rnotes
 
     Courseware.dialog('Last Repository Commit', @repository.last_commit)
     Courseware.bailout?('Abort now if the commit message displayed is not what you expected.')
