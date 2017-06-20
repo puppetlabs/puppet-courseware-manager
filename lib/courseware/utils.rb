@@ -37,7 +37,7 @@ class Courseware
 
   def self.bailout?(message, required=false)
     if required
-      print "#{message} Continue? ['y/N']: " : 
+      print "#{message} Continue? ['y/N']: "
       options = ['y', 'yes']
     else
       print "#{message} Continue? ['Y/n']: "
@@ -109,7 +109,7 @@ class Courseware
     variants[idx]
   end
 
-  # TODO: I'm not happy with this being here, but I don't see a better place for it just now
+  # TODO: most of this will go away when the composer is rewritten to use `showoff info`
   def self.parse_showoff(filename)
     showoff    = JSON.parse(File.read(filename))
     sections   = showoff['sections'].map do |entry, section|
@@ -121,15 +121,20 @@ class Courseware
         file = section
       end
 
-      unless file
-        puts "Malformed entry: #{entry.inspect} - #{section.inspect}"
-        next nil
+      if file.is_a? String
+        unless file
+          puts "Malformed entry: #{entry.inspect} - #{section.inspect}"
+          next nil
+        end
+
+        path = File.dirname(file)
+        data = JSON.parse(File.read(file))
+
+        data.map { |source| "#{path}/#{source}" }
+      else
+        file
       end
 
-      path = File.dirname(file)
-      data = JSON.parse(File.read(file))
-
-      data.map { |source| "#{path}/#{source}" }
     end.flatten.compact
     showoff['sections'] = sections
 

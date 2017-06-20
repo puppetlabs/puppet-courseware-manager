@@ -1,45 +1,84 @@
 class Courseware::Manager
 
   def obsolete
-    # We need to get all slides from all variants to determine what's obsolete.
-    allsections = Dir.glob('*.json').collect do |variant|
-      Courseware.parse_showoff(variant)['sections'] rescue nil
-    end.flatten.uniq
+    allslides = Dir.glob('_content/**/*.md')
+    allimages = Dir.glob('_images/**/*').reject {|path| path.include? '_images/src' }
+    slides    = []
+    images    = []
 
-    puts "Obsolete images:"
-    Dir.glob('**/_images/*') do |file|
-      next if File.symlink? file
-      next if File.directory? file
-      next if system("grep #{file} *.css */*.md >/dev/null 2>&1")
+    Dir.glob('*').each do |path|
+      next if path == 'spec'
+      next if path.start_with? '_'
+      next unless File.directory? path
 
-      puts "  * #{file}"
+      print "Validating #{path}."
+      allslides.concat Dir.glob("#{path}/**/*.md").reject {|file| file.include?('README.md')      ||
+                                                                  file.include?('_notes')         ||
+                                                                  File.dirname(file) == path }
+
+      allimages.concat Dir.glob("#{path}/_images/**/*").reject {|file| file.include?('README.md') ||
+                                                                       file.include?('src/')      ||
+                                                                       File.directory?(file) }
+
+      Dir.chdir(path) do
+        Dir.glob('*.json').each do |filename|
+          content = JSON.parse(`showoff info -jf #{filename}`)
+          lslides = content['files'].map do |slide|
+            slide.start_with?('_') ? slide.sub('_shared', '_content') : "#{path}/#{slide}"
+          end
+          limages = content['images'].map do |image|
+            image.start_with?('_images/shared') ? image.sub('_images/shared', '_images') : "#{path}/#{image}"
+          end
+
+          slides.concat(lslides)
+          images.concat(limages)
+
+          print '.'
+        end
+        puts
+      end
+    end
+
+    # remove the intersection, and what's left over is obsolete
+    obs_slides = (allslides - slides.uniq!)
+    obs_images = (allimages - images.uniq!)
+
+    puts "Obsolete slides:" unless obs_slides.empty?
+    obs_slides.each do |slide|
+      puts "  * #{slide}"
       @warnings += 1
     end
 
-    puts "Obsolete slides:"
-    Dir.glob('**/*.md') do |file|
-      next if File.symlink? file
-      next if File.directory? file
-      next if file =~ /^_.*$|^[^\/]*$/
-      next if allsections.include? file
-
-      puts "  * #{file}"
+    puts "Obsolete images:" unless obs_images.empty?
+    obs_images.each do |image|
+      puts "  * #{image}"
       @warnings += 1
     end
   end
 
   def missing
-    sections = @sections.dup
+    filename = @config[:presfile]
+    content  = JSON.parse(`showoff info -jf #{filename}`)
+    sections = content['files']
+    images   = content['images']
 
-    # This seems backwards, but we do it this way to get a case sensitive match
+    # This seems backwards, but we do it this way to get a case sensitive match on a case-insensitive-preserving filesystem
     # http://stackoverflow.com/questions/357754/can-i-traverse-symlinked-directories-in-ruby-with-a-glob -- Baby jesus is crying.
     Dir.glob("**{,/*/**}/*.md") do |file|
       sections.delete(file)
     end
-    return if sections.empty?
+    Dir.glob("_images/**{,/*/**}/*") do |file|
+      images.delete(file)
+    end
 
-    puts "Missing slides:"
+    puts "Missing slides:" unless sections.empty?
     sections.each do |slide|
+      puts "  * #{slide}"
+      @errors += 1
+    end
+
+    puts "Missing images:" unless images.empty?
+    images.each do |slide|
       puts "  * #{slide}"
       @errors += 1
     end

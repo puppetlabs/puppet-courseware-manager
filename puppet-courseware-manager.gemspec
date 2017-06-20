@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.files            += Dir.glob("doc/**/*")
 
   s.add_runtime_dependency  "mdl",       '~> 0.2'
-  s.add_runtime_dependency  "showoff",   '~> 0.10'
+  s.add_runtime_dependency  "showoff",   '~> 0.18.2'
   s.add_runtime_dependency  "word_wrap", '~> 1.0'
 
   s.description       = <<-desc

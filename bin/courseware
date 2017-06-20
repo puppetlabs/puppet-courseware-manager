@@ -86,10 +86,10 @@ config[:pdf][:license]        ||= nil
 config[:release]              ||= {}
 config[:release][:links]      ||= []
 
-# Validating obsolete slides is special because we have to load all variants;
+# Validating obsolete slides is special because we have to load all courses;
 # nonetheless, we do need *something* valid there, so drop in a dummy value.
 if ARGV == ['validate', 'obsolete']
-  config[:presfile] ||= 'showoff.json'
+  config[:presfile]   = :none
 else
   config[:presfile] ||= Courseware.choose_variant
 end

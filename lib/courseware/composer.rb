@@ -3,6 +3,8 @@ class Courseware::Composer
     @config     = config
     @repository = repository || Courseware::Repository.new(config)
 
+    return if @config[:presfile] == :none
+
     if File.exists?(@config[:presfile])
       @showoff    = JSON.parse(File.read(@config[:presfile]))
       @coursename = @showoff['name']

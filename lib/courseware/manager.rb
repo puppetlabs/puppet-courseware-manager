@@ -15,6 +15,8 @@ class Courseware::Manager
     @warnings   = 0
     @errors     = 0
 
+    return if @config[:presfile] == :none
+
     showoff     = Courseware.parse_showoff(@config[:presfile])
     @coursename = showoff['name']
     @prefix     = showoff['name'].gsub(' ', '_')
