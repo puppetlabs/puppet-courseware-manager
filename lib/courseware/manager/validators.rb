@@ -12,6 +12,8 @@ class Courseware::Manager
       next unless File.directory? path
 
       print "Validating #{path}."
+
+      # stuff presentation local slides & images into the collections of available content
       allslides.concat Dir.glob("#{path}/**/*.md").reject {|file| file.include?('README.md')      ||
                                                                   file.include?('_notes')         ||
                                                                   File.dirname(file) == path }
@@ -22,6 +24,7 @@ class Courseware::Manager
 
       Dir.chdir(path) do
         Dir.glob('*.json').each do |filename|
+          # determine which slides and images are actually used
           content = JSON.parse(`showoff info -jf #{filename}`)
           lslides = content['files'].map do |slide|
             slide.start_with?('_') ? slide.sub('_shared', '_content') : "#{path}/#{slide}"

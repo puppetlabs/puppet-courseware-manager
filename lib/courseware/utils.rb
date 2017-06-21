@@ -109,36 +109,9 @@ class Courseware
     variants[idx]
   end
 
-  # TODO: most of this will go away when the composer is rewritten to use `showoff info`
+  # TODO: we could use some validation here
   def self.parse_showoff(filename)
-    showoff    = JSON.parse(File.read(filename))
-    sections   = showoff['sections'].map do |entry, section|
-      next entry if entry.is_a? String and section.nil?
-
-      if entry.is_a? Hash
-        file = entry['include']
-      else
-        file = section
-      end
-
-      if file.is_a? String
-        unless file
-          puts "Malformed entry: #{entry.inspect} - #{section.inspect}"
-          next nil
-        end
-
-        path = File.dirname(file)
-        data = JSON.parse(File.read(file))
-
-        data.map { |source| "#{path}/#{source}" }
-      else
-        file
-      end
-
-    end.flatten.compact
-    showoff['sections'] = sections
-
-    return showoff
+    JSON.parse(File.read(filename))
   end
 
   def self.get_component(initial)

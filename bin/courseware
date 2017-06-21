@@ -89,7 +89,7 @@ config[:release][:links]      ||= []
 # Validating obsolete slides is special because we have to load all courses;
 # nonetheless, we do need *something* valid there, so drop in a dummy value.
 if ARGV == ['validate', 'obsolete']
-  config[:presfile]   = :none
+  config[:presfile] ||= :none
 else
   config[:presfile] ||= Courseware.choose_variant
 end
@@ -153,7 +153,7 @@ begin
     courseware.compose subject.first
 
   when :package
-    courseware.package subject.first
+    courseware.package config[:presfile]
 
   when :shell
     courseware.debug

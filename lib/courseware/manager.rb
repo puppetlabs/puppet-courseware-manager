@@ -20,7 +20,6 @@ class Courseware::Manager
     showoff     = Courseware.parse_showoff(@config[:presfile])
     @coursename = showoff['name']
     @prefix     = showoff['name'].gsub(' ', '_')
-    @sections   = showoff['sections']
     @password   = showoff['key']
   end
 
