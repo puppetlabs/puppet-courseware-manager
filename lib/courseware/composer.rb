@@ -17,31 +17,27 @@ class Courseware::Composer
 
     if subject.nil?
       display_tags
-      raise "Please re-run this task with a list of tags to include."
+      raise 'Please re-run this task with a list of tags to include.'
     end
+    raise 'Please re-run this task with a list of tags to include.' unless subject.is_a? Array
+    raise 'No master section defined in `showoff.json`' unless @showoff.include? 'master'
 
-    subject.each do |tag|
-      key = "tag:#{tag}"
-      @showoff['sections'].each do |section|
-        raise 'All sections must be represented as Hashes to customize.' unless section.is_a? Hash
+    newsections = {}
+    @showoff['master'].each do |section|
+      next if (section['tags'] & subject).empty?
 
-        if section.include? key
-          raise "A section in showoff.json refers to #{section[key]}, which does not exist." unless File.exist? section[key]
-          section['include'] = section[key]
-        end
-      end
+      name = section['name']
+      newsections[name] = section['content']
     end
-
-    # normalize the output and trim unused tags
-    @showoff['sections'].each do |section|
-      section.select! { |k,v| k == 'include' }
-    end
-    @showoff['sections'].reject! { |section| section.empty? }
 
     name = Courseware.question('What would you like to call this variant?', 'custom').gsub(/\W+/, '_')
     desc = Courseware.question("Enter a customized description if you'd like:")
 
+    @showoff.delete 'tags'
+    @showoff.delete 'master'
+    @showoff['name']        = name if name
     @showoff['description'] = desc if desc
+    @showoff['sections']    = newsections
 
     File.write("#{name}.json", JSON.pretty_generate(@showoff))
     puts "Run your presentation with `showoff serve -f #{name}.json` or `rake present`"

@@ -90,6 +90,10 @@ config[:release][:links]      ||= []
 # nonetheless, we do need *something* valid there, so drop in a dummy value.
 if ARGV == ['validate', 'obsolete']
   config[:presfile] ||= :none
+
+elsif ARGV.first == 'compose'
+  config[:presfile] ||= 'showoff.json'
+
 else
   config[:presfile] ||= Courseware.choose_variant
 end
