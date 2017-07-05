@@ -89,9 +89,11 @@ class Courseware
 
   def self.choose_variant
     variants = Dir.glob('*.json')
-    maxlen   = variants.max { |x,y| x.size <=> y.size }.size - 4 # accomodate for the extension we're stripping
-
+    return :none if variants.empty?
     return 'showoff.json' if variants == ['showoff.json']
+
+    maxlen = variants.max { |x,y| x.size <=> y.size }.size - 4 # accomodate for the extension we're stripping
+
 
     # Ensures that the default `showoff.json` is listed first
     variants.unshift "showoff.json"

@@ -1,6 +1,8 @@
 class Courseware::Manager
 
   def obsolete
+    toplevel!
+
     allslides = Dir.glob('_content/**/*.md')
     allimages = Dir.glob('_images/**/*').reject {|path| path.include? '_images/src' }
     slides    = []
@@ -60,6 +62,8 @@ class Courseware::Manager
   end
 
   def missing
+    courselevel!
+
     filename = @config[:presfile]
     content  = JSON.parse(`showoff info -jf #{filename}`)
     sections = content['files']
@@ -88,6 +92,8 @@ class Courseware::Manager
   end
 
   def lint
+    courselevel!
+
     puts "Checking Markdown style:"
     style  = File.join(@config[:cachedir], 'templates', 'markdown_style.rb')
     style  = File.exists?(style) ? style : 'all'
