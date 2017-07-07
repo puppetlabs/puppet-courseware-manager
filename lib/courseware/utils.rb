@@ -37,10 +37,10 @@ class Courseware
 
   def self.bailout?(message, required=false)
     if required
-      print "#{message} Continue? ['y/N']: " : 
+      print "#{message} Continue? [y/N]: " : 
       options = ['y', 'yes']
     else
-      print "#{message} Continue? ['Y/n']: "
+      print "#{message} Continue? [Y/n]: "
       options = [ 'y', 'yes', '']
     end
     unless options.include? STDIN.gets.strip.downcase
