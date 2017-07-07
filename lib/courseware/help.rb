@@ -46,16 +46,15 @@ class Courseware
               Runs validation checks on the presentation. Defaults to running all the checks.
 
               Validators:
-                  obsolete: Lists all unreferenced images and slides. This reference checks
-                            all slides and all CSS stylesheets. Case sensitive.
+                  obsolete: Lists all unreferenced images and slides. This reference checks all
+                            slides and all CSS stylesheets. This validation is case sensitive
+                            and should be run from the toplevel courseware root directory.
 
-                            Note: This validator will validate all course variants.
-
-                   missing: Lists all slides that are missing. Note that this does not check
-                            for missing image files yet. Case sensitive.
+                   missing: Lists all slides and images that are missing. This validation is case
+                            sensitive and should be run from within an individual course directory.
 
                       lint: Runs a markdown linter on each slide file, using our own style
-                            definition.
+                            definition. This should be run within a course directory.
 
           * release [type]
               Orchestrate a courseware release. Defaults to `point`.
