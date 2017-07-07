@@ -37,7 +37,7 @@ class Courseware
 
   def self.bailout?(message, required=false)
     if required
-      print "#{message} Continue? [y/N]: " : 
+      print "#{message} Continue? [y/N]: "
       options = ['y', 'yes']
     else
       print "#{message} Continue? [Y/n]: "
