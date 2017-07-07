@@ -7,7 +7,6 @@ class Courseware::Dummy
     showoff     = Courseware.parse_showoff(@config[:presfile])
     @coursename = showoff['name']
     @prefix     = showoff['name'].gsub(' ', '_')
-    @sections   = showoff['sections']
     @password   = showoff['key']
     @current    = showoff['courseware_release']
   end

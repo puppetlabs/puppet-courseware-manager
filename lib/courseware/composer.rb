@@ -3,11 +3,12 @@ class Courseware::Composer
     @config     = config
     @repository = repository || Courseware::Repository.new(config)
 
+    return if @config[:presfile] == :none
+
     if File.exists?(@config[:presfile])
       @showoff    = JSON.parse(File.read(@config[:presfile]))
       @coursename = @showoff['name']
       @prefix     = @showoff['name'].gsub(' ', '_')
-      @sections   = @showoff['sections']
     end
   end
 
@@ -16,31 +17,27 @@ class Courseware::Composer
 
     if subject.nil?
       display_tags
-      raise "Please re-run this task with a list of tags to include."
+      raise 'Please re-run this task with a list of tags to include.'
     end
+    raise 'Please re-run this task with a list of tags to include.' unless subject.is_a? Array
+    raise 'No master section defined in `showoff.json`' unless @showoff.include? 'master'
 
-    subject.each do |tag|
-      key = "tag:#{tag}"
-      @showoff['sections'].each do |section|
-        raise 'All sections must be represented as Hashes to customize.' unless section.is_a? Hash
+    newsections = {}
+    @showoff['master'].each do |section|
+      next if (section['tags'] & subject).empty?
 
-        if section.include? key
-          raise "A section in showoff.json refers to #{section[key]}, which does not exist." unless File.exist? section[key]
-          section['include'] = section[key]
-        end
-      end
+      name = section['name']
+      newsections[name] = section['content']
     end
-
-    # normalize the output and trim unused tags
-    @showoff['sections'].each do |section|
-      section.select! { |k,v| k == 'include' }
-    end
-    @showoff['sections'].reject! { |section| section.empty? }
 
     name = Courseware.question('What would you like to call this variant?', 'custom').gsub(/\W+/, '_')
     desc = Courseware.question("Enter a customized description if you'd like:")
 
+    @showoff.delete 'tags'
+    @showoff.delete 'master'
+    @showoff['name']        = name if name
     @showoff['description'] = desc if desc
+    @showoff['sections']    = newsections
 
     File.write("#{name}.json", JSON.pretty_generate(@showoff))
     puts "Run your presentation with `showoff serve -f #{name}.json` or `rake present`"
@@ -51,61 +48,56 @@ class Courseware::Composer
     on_release!
     pristine!
 
-    subject ||= Courseware.choose_variant
-    subject   = subject.to_s
-    content   = Courseware.parse_showoff(subject)
+    content   = JSON.parse(`showoff info -jf #{subject}`)
     variant   = File.basename(subject, '.json')
     current   = @repository.current(@coursename)
 
     if variant == 'showoff'
-      variant = @prefix
       output  = @prefix
     else
       output  = "#{@prefix}-#{variant}"
     end
 
-    FileUtils.rm_rf "build/#{variant}"
-    FileUtils.mkdir_p "build/#{variant}"
-    FileUtils.cp subject, "build/#{variant}/showoff.json"
+    FileUtils.rm_rf "build/#{@prefix}"
+    FileUtils.mkdir_p "build/#{@prefix}"
+    FileUtils.cp subject, "build/#{@prefix}/showoff.json"
 
-    content['sections'].each do |section|
-      if section.is_a? Hash
-        path = section['include']
-      else
-        path = section
-      end
+    # Copy in only the slides used
+    content['files'].each do |path|
+      FileUtils.mkdir_p "build/#{@prefix}/#{File.dirname(path)}"
+      FileUtils.cp path, "build/#{@prefix}/#{path}"
+    end
 
-      dir   = File.dirname path
-      FileUtils.mkdir_p "build/#{variant}/#{dir}"
-      FileUtils.cp path, "build/#{variant}/#{path}"
-
-      next unless section.is_a? Hash
-
-      files = JSON.parse(File.read(path))
-      files.each do |file|
-        FileUtils.cp "#{dir}/#{file}", "build/#{variant}/#{dir}/#{file}"
-      end
+    # Copy in only the images used
+    content['images'].each do |path|
+      FileUtils.mkdir_p "build/#{@prefix}/#{File.dirname(path)}"
+      FileUtils.cp path, "build/#{@prefix}/#{path}"
     end
 
     # support is special
-    FileUtils.cp_r '../_support', "build/#{variant}/_support"
-    FileUtils.rm_f "build/#{variant}/_support/*.pem"
-    FileUtils.rm_f "build/#{variant}/_support/*.pub"
-    FileUtils.rm_f "build/#{variant}/_support/aws_credentials"
+    FileUtils.cp_r '../_support', "build/#{@prefix}/_support"
+    FileUtils.rm_f "build/#{@prefix}/_support/*.pem"
+    FileUtils.rm_f "build/#{@prefix}/_support/*.pub"
+    FileUtils.rm_f "build/#{@prefix}/_support/aws_credentials"
 
     # duplicate from cwd to build/variant everything not already copied
-    Dir.glob('*').each do |thing|
-      next if thing == 'build'
-      next if File.extname(thing) == '.json'
-      next if File.exist? "build/#{variant}/#{thing}"
-      FileUtils.ln_s "../../#{thing}", "build/#{variant}/#{thing}"
+    Dir.glob('**{,/*/**}/*').each do |path|
+      next if path.start_with? 'build'
+      next if path.start_with? 'stats'
+      next if path.start_with? 'pdf'
+      next if path.start_with? '_images'
+      next if path == 'user.js'
+      next if path =~ /^\w+.json$/
+      next if File.exist? "build/#{@prefix}/#{path}"
+
+      FileUtils.mkdir_p "build/#{@prefix}/#{File.dirname(path)}" unless File.directory?(path)
+      FileUtils.ln_s File.expand_path(path), "build/#{@prefix}/#{path}"
     end
 
-    system("tar -C build --dereference -czf build/#{output}-#{current}.tar.gz  #{variant}")
+    system("tar -C build --dereference -czf build/#{output}-#{current}.tar.gz  #{@prefix}")
     if Courseware.confirm("Would you like to clean up the output build directory?")
-      FileUtils.rm_rf "build/#{variant}"
+      FileUtils.rm_rf "build/#{@prefix}"
     end
-
   end
 
 private
