@@ -1,6 +1,14 @@
 # Courseware Manager
 ## Release Notes
 
+### v0.6.0
+* Can now work with topic directories.
+* Knows how to identify obsolete slides and images across all courses.
+* Smarter use of `showoff info` to find which files are in use.
+* Can package course variants containing only the files & images in use.
+* Default to `no` when making irreversible changes to the repo.
+
+
 ### v0.5.4
 * When running non-interactively and a default is provided, don't prompt for input.
 
