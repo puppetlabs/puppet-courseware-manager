@@ -39,6 +39,14 @@ optparse = OptionParser.new { |opts|
         cmdlineopts[:nocache] = true
     end
 
+    opts.on("-e ID", "--event-id ID", "Event ID to use for generated PDF files") do |opt|
+        cmdlineopts[:event_id] = opt
+    end
+
+    opts.on("-k KEY", "--key KEY", "Key to encrypt PDF files with") do |opt|
+        cmdlineopts[:key] = opt
+    end
+
     opts.on("-d", "--debug", "Display debugging messages") do
         cmdlineopts[:debug] = true
     end
