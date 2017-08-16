@@ -16,13 +16,23 @@ class Courseware::Printer
 
     if @config[:pdf][:watermark]
       showoff   = Courseware.parse_showoff(@config[:presfile])
+      default   = @event_id[/-?(\w*)$/, 1] rescue nil
 
-      @event_id = showoff['event_id'] || Courseware.question('Enter the Event ID:')
-      @password = showoff['key']      || Courseware.question('Enter desired password:', (@event_id[/-?(\w*)$/, 1] rescue nil))
+      @event_id = showoff['event_id'] || @config[:event_id] || Courseware.question('Enter the Event ID:')
+      @password = showoff['key']      || @config[:key]      || Courseware.question('Enter desired password:', default)
 
       if @config[:nocache]
-        @watermark_style = File.join('_support', 'watermark.css')
-        @watermark_pdf   = File.join('_support', 'watermark.pdf')
+        # Find the '_support' directory, up to three levels up
+        # This allows some flexibility in how the courseware repository is laid out
+        path = '_support'
+        3.times do
+          break if File.exist?(path)
+          path = File.join('..', path)
+        end
+        raise "No support files found" unless File.directory?(path)
+
+        @watermark_style = File.join(path, 'watermark.css')
+        @watermark_pdf   = File.join(path, 'watermark.pdf')
       else
         @watermark_style = File.join(@config[:cachedir], 'templates', 'watermark.css')
         @watermark_pdf   = File.join(@config[:cachedir], 'templates', 'watermark.pdf')
