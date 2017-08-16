@@ -18,8 +18,8 @@ class Courseware::Printer
       showoff   = Courseware.parse_showoff(@config[:presfile])
       default   = @event_id[/-?(\w*)$/, 1] rescue nil
 
-      @event_id = showoff['event_id'] || @config[:event_id] || Courseware.question('Enter the Event ID:')
-      @password = showoff['key']      || @config[:key]      || Courseware.question('Enter desired password:', default)
+      @event_id = @config[:event_id] || showoff['event_id'] || Courseware.question('Enter the Event ID:')
+      @password = @config[:key]      || showoff['key']      || Courseware.question('Enter desired password:', default)
 
       if @config[:nocache]
         # Find the '_support' directory, up to three levels up
