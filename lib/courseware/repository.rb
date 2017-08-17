@@ -105,10 +105,29 @@ class Courseware::Repository
   end
 
   def releasenotes(last, version)
+    # get used files from showoff and combine them into a single array
+    used = JSON.parse(`showoff info --json`).values.reduce(:+)
+    logs = `git log --name-only --no-merges --pretty="format:* (%h) %s [%aN]" #{last}..HEAD`
+    curr = nil
+    keep = []
+
+    # sanitize
+    used.map! {|i| i.sub('_shared', '_content') }
+    used.map! {|i| i.sub('_images/shared', '_images') }
+
+    # now iterate through and select log entries that change files this presentation uses
+    logs.each_line do |line|
+      if (curr.nil? or line.start_with? '*')
+        curr = line
+      else
+        keep << curr if used.include? line.strip
+      end
+    end
+
     str = "### #{version}\n"
     str << "{{{Please summarize the release here}}}\n"
     str << "\n"
-    str << `git log --no-merges --pretty="format:* (%h) %s [%aN]" #{last}..HEAD -- .`
+    str << keep.uniq.join
     str
   end
 
