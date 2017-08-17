@@ -1,6 +1,13 @@
 # Courseware Manager
 ## Release Notes
 
+### v0.6.1
+* Generate release notes for shared content
+* Allow different schemes for different git remotes
+* More robust printing options, such as key/id CLI args
+* Catch empty PDF files when printing shared content
+
+
 ### v0.6.0
 * Can now work with topic directories.
 * Knows how to identify obsolete slides and images across all courses.
