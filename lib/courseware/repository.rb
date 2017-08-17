@@ -126,25 +126,24 @@ class Courseware::Repository
 private
 
   def configure_courseware
-    courseware = "#{@config[:github][:public]}/#{@config[:github][:repository]}"
-    upstream   = "#{@config[:github][:development]}/#{@config[:github][:repository]}"
+    check_remote('courseware', "#{@config[:github][:public]}/#{@config[:github][:repository]}")
+    check_remote('upstream',   "#{@config[:github][:development]}/#{@config[:github][:repository]}")
+  end
 
-    # Check the origin to see which scheme we should use
-    origin = `git config --get remote.origin.url`.chomp
-    if origin =~ /^(git@|https:\/\/)github.com[:\/].*\/#{@config[:github][:repository]}(?:-.*)?(?:.git)?$/
+  def check_remote(remote, url)
+    existing = `git config --get remote.#{remote}.url`.chomp
+    if existing =~ /^(git@|https:\/\/)github.com[:\/].*\/#{@config[:github][:repository]}(?:-.*)?(?:.git)?$/
       case $1
       when 'git@'
-        ensure_remote('courseware', "git@github.com:#{courseware}.git")
-        ensure_remote('upstream',   "git@github.com:#{upstream}.git")
+        ensure_remote(remote, "git@github.com:#{url}.git")
       when 'https://'
-        ensure_remote('courseware', "https://github.com/#{courseware}.git")
-        ensure_remote('upstream',   "https://github.com/#{upstream}.git")
+        ensure_remote(remote, "https://github.com/#{url}.git")
       end
-    elsif origin.empty?
+    elsif existing.empty?
       $logger.warn 'Your origin remote is not set properly.'
       $logger.warn 'Generating PDF files and other local operations will work properly, but many repository actions will fail.'
     else
-      raise "Your origin (#{origin}) does not appear to be configured correctly."
+      raise "Your remote (#{existing}) does not appear to be configured correctly."
     end
   end
 
