@@ -188,7 +188,8 @@ class Courseware::Printer
       system(*command.flatten)
       raise 'Error generating PDF files' unless $?.success?
 
-      if `pdftk #{output} dump_data | grep NumberOfPages`.chomp == 'NumberOfPages: 1'
+      pagecount = `pdftk #{output} dump_data`.each_line.select {|l| l.match /NumberOfPages/ }.first.split.last.to_i rescue nil
+      if [1, 2].include? pagecount
         puts "#{output} is empty; aborting and cleaning up."
         FileUtils.rm(output)
         return
