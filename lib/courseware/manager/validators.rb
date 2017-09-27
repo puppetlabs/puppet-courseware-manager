@@ -10,6 +10,7 @@ class Courseware::Manager
 
     Dir.glob('*').each do |path|
       next if path == 'spec'
+      next if path == 'stats'      
       next if path.start_with? '_'
       next unless File.directory? path
 
