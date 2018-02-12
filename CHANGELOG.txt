@@ -1,6 +1,9 @@
 # Courseware Manager
 ## Release Notes
 
+### v0.6.2
+* Pin a dependency to a version that will still install on CentOS7
+
 ### v0.6.1
 * Generate release notes for shared content
 * Allow different schemes for different git remotes
