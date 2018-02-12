@@ -22,6 +22,9 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency  "mdl",       '~> 0.2'
   s.add_runtime_dependency  "showoff",   '~> 0.18'
   s.add_runtime_dependency  "word_wrap", '~> 1.0'
+  
+  # This is a dependency of a dependency, but they broke semver so we now have to pin to make it installable on CentOS7
+  s.add_runtime_dependency  "mixlib-config", '<= 2.2.4'
 
   s.description       = <<-desc
   Manage the development lifecycle of Puppet courseware. This tool is not
