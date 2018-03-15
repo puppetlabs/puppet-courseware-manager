@@ -105,8 +105,10 @@ class Courseware::Repository
   end
 
   def releasenotes(last, version)
-    # get used files from showoff and combine them into a single array
-    used = JSON.parse(`showoff info --json`).values.reduce(:+)
+    # get used files from each variant and combine them into a single array
+    used = Array(@config[:presfile]).inject([]) do |acc, variant|
+      acc + JSON.parse(`showoff info -jf #{variant}`).values.reduce(:+)
+    end.uniq
     logs = `git log --name-only --no-merges --pretty="format:* (%h) %s [%aN]" #{last}..HEAD`
     curr = nil
     keep = []

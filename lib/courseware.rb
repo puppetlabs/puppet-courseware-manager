@@ -12,7 +12,6 @@ class Courseware
     @configfile = configfile
     @cache      = Courseware::Cache.new(config)
     @generator  = Courseware::Generator.new(config)
-    @composer   = Courseware::Composer.new(config)
 
     if Courseware::Repository.repository?
       @repository = Courseware::Repository.new(config)
@@ -149,11 +148,11 @@ class Courseware
   end
 
   def compose(subject)
-    @composer.build(subject)
+    Courseware::Composer.new(@config).build(subject)
   end
 
   def package(subject)
-    @composer.package(subject)
+    Courseware::Composer.new(@config).package(subject)
   end
 
   def debug

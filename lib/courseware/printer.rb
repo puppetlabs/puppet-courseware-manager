@@ -54,25 +54,25 @@ class Courseware::Printer
   end
 
   def handouts
-    $logger.info "Generating handouts pdf for #{@course} #{@version}..."
+    $logger.info "Generating handouts pdf for #{@variant} #{@course} #{@version}..."
 
     generate_pdf(:print)
   end
 
   def exercises
-    $logger.info "Generating exercise guide pdf for #{@course} #{@version}..."
+    $logger.info "Generating exercise guide pdf for #{@variant} #{@course} #{@version}..."
 
     generate_pdf(:exercises)
   end
 
   def solutions
-    $logger.info "Generating solutions guide pdf for #{@course} #{@version}..."
+    $logger.info "Generating solutions guide pdf for #{@variant} #{@course} #{@version}..."
 
     generate_pdf(:solutions)
   end
 
   def guide
-    $logger.info "Generating instructor guide pdf for #{@course} #{@version}..."
+    $logger.info "Generating instructor guide pdf for #{@variant} #{@course} #{@version}..."
 
     generate_pdf(:guide)
   end
