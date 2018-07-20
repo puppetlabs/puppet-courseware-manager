@@ -17,7 +17,9 @@ class Courseware::Manager
 
     return if @config[:presfile] == :none
 
-    showoff     = Courseware.parse_showoff(@config[:presfile])
+    # if :presfile is an array, we're making a release, so look at the "main" presfile
+    presfile    = @config[:presfile].is_a?(String) ? @config[:presfile] : 'showoff.json'
+    showoff     = Courseware.parse_showoff(presfile)
     @coursename = showoff['name']
     @prefix     = showoff['name'].gsub(' ', '_')
     @password   = showoff['key']
@@ -116,10 +118,21 @@ private
   end
 
   def build_pdfs(version)
+    # This data structure dance is because the printer expects a configuration.
+    # It could be rewritten at some point to accept an array of presfiles, but
+    # this was more expedient and fewer moving parts.
+    config   = @config.dup
+    variants = Array(config[:presfile])
+
     @generator.styles(@coursename, version)
-    Courseware::Printer.new(@config, print_opts(version)) do |printer|
-      printer.print
+    # print each variant selected
+    variants.each do |variant|
+      config[:presfile] = variant
+      Courseware::Printer.new(config, print_opts(version)) do |printer|
+        printer.print
+      end
     end
+
     system("open #{@config[:output]} >/dev/null 2>&1")
   end
 

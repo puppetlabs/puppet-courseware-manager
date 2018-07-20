@@ -99,6 +99,9 @@ config[:release][:links]      ||= []
 if ARGV == ['validate', 'obsolete']
   config[:presfile] ||= :none
 
+elsif ARGV.first == 'release'
+  config[:presfile] ||= Courseware.choose_variant(:exhaustive => true)
+
 elsif ARGV.first == 'compose'
   config[:presfile] ||= 'showoff.json'
 
